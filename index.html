@@ -679,10 +679,211 @@ const daughterPlan = {
   ]
 };
 
-const dadPlan = null;
+const dadPlans = {
+  "周一":{
+    title:"爸爸｜周一 全身力量 + 核心",
+    focus:"10–12分钟｜站立为主｜全身力量 + 抗旋转核心",
+    total:"约 12 分钟",
+    note:"所有动作使用轻到中等阻力。发力时呼气、回位时吸气，不憋气，不做到力竭。页面中的动作示范/视频链接需要联网打开。",
+    sections:[
+      {type:"warmup",name:"热身",time:"2 分钟",items:[
+        ["原地走","自然摆臂，逐渐加快","60秒"],
+        ["肩绕环 + 髋部活动","肩膀向后绕，髋部轻松活动","60秒"]
+      ]},
+      {type:"mainwork",name:"主训练｜2 轮",time:"10 分钟",items:[
+        ["椅子深蹲","约10–12次。蹲下吸气，起身呼气；屁股向后坐","40秒 + 休20秒"],
+        ["墙壁俯卧撑","约10–15次。靠近墙吸气，推开时呼气","40秒 + 休20秒"],
+        ["弹力带划船","约10–15次。拉回时呼气，回位吸气；不要后仰借力","40秒 + 休20秒"],
+        ["Pallof Press","左20秒 + 右20秒。双手向前推出时呼气，身体不要旋转","40秒 + 休20秒"],
+        ["站姿交替抬膝","核心轻收，正常呼吸，不用力卷腹","40秒 + 休20秒"]
+      ]}
+    ]
+  },
+  "周二":{
+    title:"爸爸｜周二 核心 + 轻有氧",
+    focus:"约 12 分钟｜站姿核心 + 低冲击心肺",
+    total:"约 12 分钟",
+    note:"今天重点是核心稳定和活动量，不追求腹部酸痛。保持正常呼吸。",
+    sections:[
+      {type:"warmup",name:"热身",time:"1 分钟",items:[
+        ["原地走","轻松走动，逐渐加快","60秒"]
+      ]},
+      {type:"mainwork",name:"核心循环｜2 轮",time:"11 分钟",items:[
+        ["原地快速踏步","脚步轻，保持能说短句的强度","40秒 + 休20秒"],
+        ["Pallof Press 左","约8–10次。推出时呼气，骨盆和胸口朝前","40秒 + 休20秒"],
+        ["Pallof Press 右","约8–10次。推出时呼气，不被弹力带拉转","40秒 + 休20秒"],
+        ["站姿对侧提膝","左右交替，动作慢，正常呼吸","40秒 + 休20秒"],
+        ["侧向迈步","膝盖微屈，臀部发力，不跳","40秒 + 休20秒"],
+        ["墙壁平板","双手或前臂撑墙，腹部轻收，不憋气","30秒 + 休30秒"]
+      ]}
+    ]
+  },
+  "周三":{
+    title:"爸爸｜周三 臀腿 + 核心",
+    focus:"10–12分钟｜臀腿力量 + 站姿核心",
+    total:"约 11 分钟",
+    note:"髋铰链先不用重哑铃，重点是臀部向后、背部自然直。发力时呼气。",
+    sections:[
+      {type:"warmup",name:"热身",time:"1 分钟",items:[
+        ["原地走 + 髋部活动","轻松活动髋、膝、踝","60秒"]
+      ]},
+      {type:"mainwork",name:"主训练｜2 轮",time:"10 分钟",items:[
+        ["椅子深蹲","10–12次。起身呼气","40秒 + 休20秒"],
+        ["站姿髋铰链","10–12次。臀部向后，站直时呼气","40秒 + 休20秒"],
+        ["站姿后抬腿","左20秒 + 右20秒。躯干保持直立","40秒 + 休20秒"],
+        ["提踵","12–15次。慢慢抬起、慢慢放下","40秒 + 休20秒"],
+        ["Pallof Press","左20秒 + 右20秒。推出时呼气","40秒 + 休20秒"]
+      ]}
+    ]
+  },
+  "周四":{
+    title:"爸爸｜周四 恢复 + 活动度",
+    focus:"约 10 分钟｜恢复、活动度、轻核心",
+    total:"约 10 分钟",
+    note:"恢复日不追求累。动作幅度舒适即可，全程保持轻松呼吸。",
+    sections:[
+      {type:"warmup",name:"轻松走",time:"3 分钟",items:[
+        ["原地轻松走","自然摆臂，保持轻松","3分钟"]
+      ]},
+      {type:"mainwork",name:"活动度循环｜2 轮",time:"7 分钟",items:[
+        ["肩绕环","肩颈放松","40秒 + 休20秒"],
+        ["胸椎轻旋转","手放胸前，小幅度转动，不猛扭腰","40秒 + 休20秒"],
+        ["站姿髋铰链","动作慢，臀部向后","40秒 + 休20秒"],
+        ["站姿交替抬膝","核心轻收，正常呼吸","40秒 + 休20秒"]
+      ]}
+    ]
+  },
+  "周五":{
+    title:"爸爸｜周五 上肢 + 核心",
+    focus:"约 12 分钟｜胸背肩 + 核心稳定",
+    total:"约 12 分钟",
+    note:"今天以站姿推拉为主。弹力带阻力以动作标准、呼吸顺畅为准。",
+    sections:[
+      {type:"warmup",name:"热身",time:"2 分钟",items:[
+        ["原地走","逐渐加快","60秒"],
+        ["肩绕环 + 扩胸","肩颈放松","60秒"]
+      ]},
+      {type:"mainwork",name:"主训练｜2 轮",time:"10 分钟",items:[
+        ["墙壁 / 桌边俯卧撑","10–15次。推开时呼气","40秒 + 休20秒"],
+        ["弹力带划船","10–15次。拉回时呼气，不后仰","40秒 + 休20秒"],
+        ["弹力带拉开","10–15次。手臂略低于肩，拉开时呼气","40秒 + 休20秒"],
+        ["Pallof Press 左","8–10次。推出时呼气","40秒 + 休20秒"],
+        ["Pallof Press 右","8–10次。推出时呼气","40秒 + 休20秒"]
+      ]}
+    ]
+  },
+  "周六":{
+    title:"爸爸｜周六 全身循环",
+    focus:"约 12–14分钟｜全身力量 + 轻心肺",
+    total:"约 13 分钟",
+    note:"这是本周稍快的一天，但仍不跳、不憋气。感觉腹压明显升高时减慢速度或降低阻力。",
+    sections:[
+      {type:"warmup",name:"热身",time:"1 分钟",items:[
+        ["原地走","逐渐提高步频","60秒"]
+      ]},
+      {type:"mainwork",name:"全身循环｜2 轮",time:"12 分钟",items:[
+        ["椅子深蹲","起身呼气","40秒 + 休20秒"],
+        ["弹力带划船","拉回呼气","40秒 + 休20秒"],
+        ["原地快走","步频稍快，不跳","40秒 + 休20秒"],
+        ["墙壁俯卧撑","推开呼气","40秒 + 休20秒"],
+        ["侧向迈步","臀部发力，保持站立","40秒 + 休20秒"],
+        ["Pallof Press","左20秒 + 右20秒，推出时呼气","40秒 + 休20秒"]
+      ]}
+    ]
+  },
+  "周日":{
+    title:"爸爸｜周日 轻有氧 + 恢复",
+    focus:"10–15分钟｜轻有氧 + 放松",
+    total:"约 12–15 分钟",
+    note:"今天以活动和恢复为主。如果方便，户外快走可以替代原地走。",
+    sections:[
+      {type:"warmup",name:"轻有氧",time:"8–10 分钟",items:[
+        ["原地快走 / 户外快走","保持轻到中等强度，不需要跑跳","8分钟"]
+      ]},
+      {type:"stretch",name:"站姿拉伸",time:"4–5 分钟",items:[
+        ["胸肩拉伸","门框辅助，轻柔拉伸","45秒 + 换边15秒"],
+        ["髋屈肌左","骨盆保持稳定","45秒 + 换边15秒"],
+        ["髋屈肌右","不要拱腰","45秒 + 换动作15秒"],
+        ["小腿拉伸","脚跟踩地，左右交替","60秒"]
+      ]}
+    ]
+  }
+};
 
 const order = ["周一","周二","周三","周四","周五","周六","周日"];
 const memberNames = {mom:"妈妈", dad:"爸爸", daughter:"女儿"};
+
+
+const momDemoLinks = {
+  "原地踏步": {label:"视频搜索：原地踏步", url:"https://www.youtube.com/results?search_query=marching+in+place+exercise"},
+  "原地走": {label:"视频搜索：原地走", url:"https://www.youtube.com/results?search_query=marching+in+place+exercise"},
+  "原地快走": {label:"视频搜索：原地快走", url:"https://www.youtube.com/results?search_query=power+walk+in+place+exercise"},
+  "肩绕环 + 扩胸": {label:"视频搜索：肩绕环与扩胸", url:"https://www.youtube.com/results?search_query=shoulder+circles+chest+opener+exercise"},
+  "肩绕环": {label:"视频搜索：肩绕环", url:"https://www.youtube.com/results?search_query=shoulder+circles+exercise"},
+  "扩胸 / 胸椎轻旋转": {label:"视频搜索：胸椎轻旋转", url:"https://www.youtube.com/results?search_query=thoracic+rotation+exercise"},
+  "胸椎轻旋转": {label:"视频搜索：胸椎旋转", url:"https://www.youtube.com/results?search_query=thoracic+rotation+exercise"},
+  "徒手髋铰链": {label:"视频搜索：髋铰链", url:"https://www.youtube.com/results?search_query=hip+hinge+exercise"},
+  "髋铰链": {label:"视频搜索：髋铰链", url:"https://www.youtube.com/results?search_query=hip+hinge+exercise"},
+  "椅子坐站 / 浅蹲": {label:"视频搜索：椅子坐站", url:"https://www.youtube.com/results?search_query=sit+to+stand+exercise"},
+  "浅蹲": {label:"视频搜索：浅蹲", url:"https://www.youtube.com/results?search_query=bodyweight+half+squat+exercise"},
+  "椅子深蹲": {label:"视频搜索：椅子深蹲", url:"https://www.youtube.com/results?search_query=chair+squat+exercise"},
+  "臀桥": {label:"视频搜索：臀桥", url:"https://www.youtube.com/results?search_query=glute+bridge+exercise"},
+  "Bird Dog 鸟狗式": {label:"视频搜索：Bird Dog 鸟狗式", url:"https://www.youtube.com/results?search_query=bird+dog+exercise"},
+  "Bird Dog": {label:"视频搜索：Bird Dog 鸟狗式", url:"https://www.youtube.com/results?search_query=bird+dog+exercise"},
+  "Dead Bug 死虫式": {label:"视频搜索：Dead Bug 死虫式", url:"https://www.youtube.com/results?search_query=dead+bug+exercise"},
+  "Dead Bug": {label:"视频搜索：Dead Bug 死虫式", url:"https://www.youtube.com/results?search_query=dead+bug+exercise"},
+  "墙壁俯卧撑": {label:"视频搜索：墙壁俯卧撑", url:"https://www.youtube.com/results?search_query=wall+push+up+exercise"},
+  "墙壁 / 桌边俯卧撑": {label:"视频搜索：墙壁/桌边俯卧撑", url:"https://www.youtube.com/results?search_query=incline+push+up+exercise"},
+  "弹力带划船": {label:"视频搜索：弹力带划船", url:"https://www.youtube.com/results?search_query=resistance+band+row+exercise"},
+  "Pallof Press 左": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
+  "Pallof Press 右": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
+  "Pallof Press": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
+  "蚌式开合 左": {label:"视频搜索：蚌式开合", url:"https://www.youtube.com/results?search_query=clamshell+exercise"},
+  "蚌式开合 右": {label:"视频搜索：蚌式开合", url:"https://www.youtube.com/results?search_query=clamshell+exercise"},
+  "猫牛式": {label:"视频搜索：猫牛式", url:"https://www.youtube.com/results?search_query=cat+cow+exercise"},
+  "胸肩左": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
+  "胸肩右": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
+  "胸肩": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
+  "髋屈肌左": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
+  "髋屈肌右": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
+  "髋屈肌": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
+  "小腿左": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
+  "小腿右": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
+  "小腿": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
+  "左臀 / 大腿": {label:"视频搜索：泡沫轴臀腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+glutes+thigh+exercise"},
+  "右臀 / 大腿": {label:"视频搜索：泡沫轴臀腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+glutes+thigh+exercise"},
+  "左小腿": {label:"视频搜索：泡沫轴小腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+calf+exercise"},
+  "右小腿": {label:"视频搜索：泡沫轴小腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+calf+exercise"},
+  "肩部活动": {label:"视频搜索：肩部活动", url:"https://www.youtube.com/results?search_query=shoulder+mobility+exercise"},
+  "站姿交替抬膝": {label:"视频搜索：站姿交替抬膝", url:"https://www.youtube.com/results?search_query=standing+knee+raise+exercise"}
+};
+
+const dadDemoLinks = {
+  "椅子深蹲": {label:"视频搜索：椅子深蹲", url:"https://www.youtube.com/results?search_query=%E6%A4%85%E5%AD%90%E6%B7%B1%E8%B9%B2+sit+to+stand+exercise"},
+  "墙壁俯卧撑": {label:"视频搜索：墙壁俯卧撑", url:"https://www.youtube.com/results?search_query=wall+push+up+exercise"},
+  "墙壁 / 桌边俯卧撑": {label:"视频搜索：墙壁/桌边俯卧撑", url:"https://www.youtube.com/results?search_query=incline+push+up+exercise"},
+  "弹力带划船": {label:"视频搜索：弹力带划船", url:"https://www.youtube.com/results?search_query=resistance+band+row+exercise"},
+  "Pallof Press": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
+  "Pallof Press 左": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
+  "Pallof Press 右": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
+  "站姿交替抬膝": {label:"视频搜索：站姿交替抬膝", url:"https://www.youtube.com/results?search_query=standing+knee+raise+exercise"},
+  "原地快速踏步": {label:"视频搜索：原地快速踏步", url:"https://www.youtube.com/results?search_query=marching+in+place+exercise"},
+  "站姿对侧提膝": {label:"视频搜索：站姿对侧提膝", url:"https://www.youtube.com/results?search_query=standing+cross+knee+raise+exercise"},
+  "侧向迈步": {label:"视频搜索：侧向迈步", url:"https://www.youtube.com/results?search_query=lateral+step+exercise"},
+  "墙壁平板": {label:"视频搜索：墙壁平板", url:"https://www.youtube.com/results?search_query=wall+plank+exercise"},
+  "站姿髋铰链": {label:"视频搜索：站姿髋铰链", url:"https://www.youtube.com/results?search_query=hip+hinge+exercise"},
+  "站姿后抬腿": {label:"视频搜索：站姿后抬腿", url:"https://www.youtube.com/results?search_query=standing+leg+extension+glute+exercise"},
+  "提踵": {label:"视频搜索：提踵", url:"https://www.youtube.com/results?search_query=standing+calf+raise+exercise"},
+  "弹力带拉开": {label:"视频搜索：弹力带拉开", url:"https://www.youtube.com/results?search_query=band+pull+apart+exercise"},
+  "原地快走": {label:"视频搜索：原地快走", url:"https://www.youtube.com/results?search_query=power+walk+in+place+exercise"},
+  "胸肩拉伸": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
+  "髋屈肌左": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
+  "髋屈肌右": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
+  "小腿拉伸": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
+  "肩绕环": {label:"视频搜索：肩绕环", url:"https://www.youtube.com/results?search_query=shoulder+circles+exercise"},
+  "胸椎轻旋转": {label:"视频搜索：胸椎旋转", url:"https://www.youtube.com/results?search_query=thoracic+rotation+exercise"}
+};
+
 
 let currentMember = "mom";
 let currentDay = "周一";
@@ -699,7 +900,8 @@ let lastVoiceCueSecond = -1;
 function getPlan(day){
   if(currentMember === "mom") return momPlans[day];
   if(currentMember === "daughter") return daughterPlan;
-  return dadPlan;
+  if(currentMember === "dad") return dadPlans[day];
+  return null;
 }
 
 function unlockAudio(){
@@ -833,6 +1035,9 @@ function buildTimerSteps(day){
     for(let r=1;r<=rounds;r++){
       section.items.forEach(it=>{
         const dur = parseDuration(it[2]);
+        const dadCue = currentMember === "dad" && section.type === "mainwork"
+          ? {20:"保持正常呼吸。发力时呼气，不要憋气。"}
+          : null;
         steps.push({
           type:"exercise",
           name:it[0],
@@ -840,24 +1045,32 @@ function buildTimerSteps(day){
           duration:dur,
           section:section.name,
           round:rounds>1 ? `第 ${r}/${rounds} 轮` : "",
-          voiceStart:`开始${it[0]}。${it[1]}`
+          voiceStart:`开始${it[0]}。${it[1]}`,
+          cues:dadCue
         });
         const rest = parseRest(it[2]);
         if(rest>0){
           steps.push({
             type:"rest",
             name:"休息 / 换动作",
-            detail:"准备下一项",
+            detail:"准备下一项，放松呼吸",
             duration:rest,
             section:section.name,
             round:rounds>1 ? `第 ${r}/${rounds} 轮` : "",
-            voiceStart:`休息${rest}秒。`
+            voiceStart:`休息${rest}秒。放松呼吸。`
           });
         }
       });
     }
   });
   return steps;
+}
+
+
+function getDemoLink(itemTitle){
+  if(currentMember === "mom" && momDemoLinks[itemTitle]) return momDemoLinks[itemTitle];
+  if(currentMember === "dad" && dadDemoLinks[itemTitle]) return dadDemoLinks[itemTitle];
+  return null;
 }
 
 function fmt(sec){
@@ -888,8 +1101,8 @@ function render(day){
     document.getElementById("dayTitle").textContent = `${memberNames[currentMember]}｜计划暂未设置`;
     document.getElementById("dayFocus").textContent = "已保留家庭成员入口";
     document.getElementById("totalTime").textContent = "暂无训练";
-    document.getElementById("dayNote").textContent = "爸爸的训练计划尚未定义，当前不会自动套用妈妈或女儿的方案。";
-    wrap.innerHTML = `<section class="placeholder"><h3>爸爸的计划暂未设置</h3><p>后续可以根据年龄、训练目标、腰/膝/肩颈情况单独制定，再加入这里。</p></section>`;
+    document.getElementById("dayNote").textContent = "当前家庭成员暂未设置训练计划。";
+    wrap.innerHTML = `<section class="placeholder"><h3>计划暂未设置</h3><p>当前家庭成员还没有训练计划。</p></section>`;
     resetTimerPanel();
     renderHistory();
     return;
@@ -914,6 +1127,7 @@ function render(day){
             <div class="item-title">${it[0]}</div>
             <div class="item-desc">${it[1]}</div>
             ${it[0].includes("蚌式开合") ? `<a class="exercise-link" href="https://health.clevelandclinic.org/glute-exercises" target="_blank" rel="noopener">查看蚌式开合动作参考 ↗</a>` : ""}
+            ${getDemoLink(it[0]) ? `<a class="exercise-link" href="${getDemoLink(it[0]).url}" target="_blank" rel="noopener">${getDemoLink(it[0]).label} ↗</a>` : ""}
           </div>
           <div class="duration">${it[2]}</div>
         </div>
