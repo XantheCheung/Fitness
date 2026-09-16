@@ -312,7 +312,66 @@
       white-space:nowrap;
     }
 
-  </style>
+  
+    .family-card{
+      background:var(--card);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+    .family-title{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:800;
+      margin-bottom:9px;
+    }
+    .family-tabs{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+    }
+    .family-btn{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      padding:12px 8px;
+      font-size:15px;
+      font-weight:900;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .family-btn.active{
+      background:#111827;
+      border-color:#111827;
+      color:#fff;
+    }
+    .voice-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid var(--line);
+    }
+    .voice-copy{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .placeholder{
+      background:var(--card);
+      border-radius:16px;
+      padding:22px 16px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+      text-align:center;
+    }
+    .placeholder h3{margin:0 0 8px;font-size:18px}
+    .placeholder p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
+
+</style>
 
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
@@ -326,6 +385,20 @@
     <section class="hero">
       <h1>一周家庭训练计划</h1>
       <p>每天约 20–30 分钟｜核心稳定 + 全身抗阻｜低冲击、腰部友好</p>
+    </section>
+
+
+    <section class="family-card">
+      <div class="family-title">选择家庭成员</div>
+      <div class="family-tabs" id="familyTabs">
+        <button class="family-btn active" data-member="mom">妈妈</button>
+        <button class="family-btn" data-member="dad">爸爸</button>
+        <button class="family-btn" data-member="daughter">女儿</button>
+      </div>
+      <div class="voice-row">
+        <div class="voice-copy">语音提醒：动作开始、节奏、换边/换方向和休息提醒</div>
+        <button class="btn btn-secondary" id="voiceBtn">语音提醒：开</button>
+      </div>
     </section>
 
     <div class="day-tabs" id="dayTabs"></div>
@@ -378,7 +451,7 @@
   </main>
 
 <script>
-const plans = {
+const momPlans = {
   "周一": {
     title:"周一｜臀腿 + 核心",
     focus:"重点：臀腿力量、核心稳定、腰椎保护",
@@ -581,8 +654,39 @@ const plans = {
 };
 
 
+
+const daughterPlan = {
+  title:"女儿｜每日肩颈与脊柱训练",
+  focus:"14岁｜每天内容相同｜低阻力、慢节奏、以无痛为前提",
+  total:"约 12–15 分钟",
+  note:"所有动作都以轻柔、无痛为标准。颈部练习使用最轻阻力弹力带，弹力带只放在后脑勺/枕骨后方，不绕过颈前或颈侧；下巴微收、头颈保持中立。如果出现头晕、头痛、手臂麻木、颈部锐痛或症状加重，应立即停止。",
+  sections:[
+    {type:"stretch", name:"1｜筋膜球放松", time:"约 3.5 分钟", items:[
+      ["肩胛骨周围 左","靠墙使用筋膜球，轻压肩胛骨周围肌肉，避开骨头；慢慢呼吸","45秒 + 换边15秒"],
+      ["肩胛骨周围 右","同上，找到轻微酸胀点后停留，不要强压","45秒 + 换动作15秒"],
+      ["胸小肌区域 左","在锁骨下方靠外侧的胸前肌肉轻压，避开骨点和敏感组织","30秒 + 换边15秒"],
+      ["胸小肌区域 右","压力保持轻到中等，不追求疼痛感","30秒 + 换动作15秒"]
+    ]},
+    {type:"mainwork", name:"2｜脊柱灵活", time:"约 2.5 分钟", items:[
+      ["猫牛式","12次/组 × 2组。约4秒一次：吸气轻轻伸展，呼气缓慢拱背；幅度舒适即可","每组48秒 + 组间休30秒"]
+    ]},
+    {type:"mainwork", name:"3｜肩关节外旋", time:"约 2 分钟", items:[
+      ["弹力带双侧肩外旋","10次/组 × 2组。肘部贴近身体，使用轻阻力；约2秒向外、2秒回位","每组40秒 + 组间休30秒"]
+    ]},
+    {type:"mainwork", name:"4｜弹力带颈后抗阻", time:"约 4 分钟", items:[
+      ["弹力带颈后抗阻","12次/组 × 3组。弹力带放在后脑勺/枕骨后方，双手在前方握住两端；下巴微收、颈部保持中立。呼气时轻轻增加张力并停留2–3秒，吸气时缓慢回位","每组约60秒 + 组间休30秒"]
+    ]}
+  ]
+};
+
+const dadPlan = null;
+
 const order = ["周一","周二","周三","周四","周五","周六","周日"];
+const memberNames = {mom:"妈妈", dad:"爸爸", daughter:"女儿"};
+
+let currentMember = "mom";
 let currentDay = "周一";
+let voiceEnabled = true;
 let timerSteps = [];
 let currentStep = 0;
 let remaining = 0;
@@ -590,6 +694,13 @@ let stepDuration = 0;
 let timerId = null;
 let isPaused = false;
 let sharedAudioCtx = null;
+let lastVoiceCueSecond = -1;
+
+function getPlan(day){
+  if(currentMember === "mom") return momPlans[day];
+  if(currentMember === "daughter") return daughterPlan;
+  return dadPlan;
+}
 
 function unlockAudio(){
   try{
@@ -603,6 +714,45 @@ function unlockAudio(){
     osc.connect(gain); gain.connect(sharedAudioCtx.destination);
     osc.start(); osc.stop(sharedAudioCtx.currentTime + 0.02);
   }catch(e){}
+}
+
+function chooseChineseVoice(){
+  try{
+    const voices = speechSynthesis.getVoices();
+    return voices.find(v => /^zh/i.test(v.lang) && /Ting|Mei|Yu|Chinese|中文|普通话/i.test(v.name))
+      || voices.find(v => /^zh/i.test(v.lang))
+      || null;
+  }catch(e){ return null; }
+}
+
+function speak(text, interrupt=true){
+  if(!voiceEnabled || !text || !("speechSynthesis" in window)) return;
+  try{
+    if(interrupt) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-CN";
+    u.rate = 1.08;
+    u.pitch = 1.0;
+    const v = chooseChineseVoice();
+    if(v) u.voice = v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function renderFamilyTabs(){
+  document.querySelectorAll(".family-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.member === currentMember);
+  });
+  document.getElementById("voiceBtn").textContent = `语音提醒：${voiceEnabled ? "开" : "关"}`;
+}
+
+function selectMember(member){
+  stopTimer();
+  currentMember = member;
+  try { localStorage.setItem("fitness_selected_member", member); } catch(e){}
+  if(member === "daughter") voiceEnabled = true;
+  renderFamilyTabs();
+  render(currentDay);
 }
 
 function parseDuration(text){
@@ -625,8 +775,57 @@ function parseRest(text){
   return 0;
 }
 
+function daughterTimerSteps(){
+  const s = [];
+  const add = (o)=>s.push(o);
+
+  add({type:"exercise",section:"筋膜球放松",name:"肩胛骨周围 左",detail:"靠墙轻压，慢慢呼吸，避开骨头",duration:45,
+       voiceStart:"开始左侧肩胛骨周围放松。轻轻压住，慢慢呼吸，不要压在骨头上。",
+       cues:{15:"保持轻压力，呼吸放松。",30:"还有十五秒。"}});
+  add({type:"rest",section:"筋膜球放松",name:"换到右侧",detail:"调整筋膜球位置",duration:15,voiceStart:"休息十五秒，准备右侧。"});
+  add({type:"exercise",section:"筋膜球放松",name:"肩胛骨周围 右",detail:"找到轻微酸胀点即可，不追求疼痛",duration:45,
+       voiceStart:"开始右侧肩胛骨周围放松。压力轻一点，肩膀保持放松。",
+       cues:{15:"保持呼吸。",30:"还有十五秒。"}});
+  add({type:"rest",section:"筋膜球放松",name:"准备胸小肌",detail:"把球移到锁骨下方靠外侧的胸前肌肉",duration:15,voiceStart:"准备胸小肌放松。"});
+  add({type:"exercise",section:"筋膜球放松",name:"胸小肌区域 左",detail:"轻压锁骨下方靠外侧，避开骨点和敏感组织",duration:30,
+       voiceStart:"左侧胸小肌区域，轻轻压住。不要追求疼痛。",cues:{15:"还有十五秒，保持自然呼吸。"}});
+  add({type:"rest",section:"筋膜球放松",name:"换到右侧",detail:"轻轻调整位置",duration:15,voiceStart:"换到右侧。"});
+  add({type:"exercise",section:"筋膜球放松",name:"胸小肌区域 右",detail:"轻压、慢呼吸",duration:30,
+       voiceStart:"右侧胸小肌区域，保持轻压力。",cues:{15:"还有十五秒。"}});
+  add({type:"rest",section:"转换",name:"准备猫牛式",detail:"到瑜伽垫四点跪姿",duration:20,voiceStart:"放松结束。二十秒准备猫牛式。"});
+
+  for(let set=1; set<=2; set++){
+    add({type:"exercise",section:"脊柱灵活",round:`第 ${set}/2 组`,name:"猫牛式｜12次",detail:"每次约4秒：吸气轻伸展，呼气缓慢拱背",duration:48,
+         voiceStart:`猫牛式第${set}组，十二次。保持四秒一次，吸气轻轻伸展，呼气缓慢拱背。`,
+         cues:{12:"保持慢节奏。",24:"完成一半。",36:"最后三次。"}});
+    if(set<2) add({type:"rest",section:"脊柱灵活",name:"组间休息",detail:"放松肩颈，保持四点跪姿或坐起",duration:30,voiceStart:"休息三十秒。"});
+  }
+
+  add({type:"rest",section:"转换",name:"准备肩关节外旋",detail:"拿轻阻力弹力带，肘部贴近身体",duration:20,voiceStart:"准备肩关节外旋。使用轻阻力弹力带。"});
+
+  for(let set=1; set<=2; set++){
+    add({type:"exercise",section:"肩关节外旋",round:`第 ${set}/2 组`,name:"双侧肩外旋｜10次",detail:"肘贴身体，2秒向外、2秒回位",duration:40,
+         voiceStart:`肩外旋第${set}组，十次。两秒向外，两秒慢慢回来。肘部贴近身体。`,
+         cues:{20:"完成一半，肩膀不要耸起。",32:"最后两次。"}});
+    if(set<2) add({type:"rest",section:"肩关节外旋",name:"组间休息",detail:"放松手臂",duration:30,voiceStart:"休息三十秒。"});
+  }
+
+  add({type:"rest",section:"转换",name:"准备弹力带颈后抗阻",detail:"选择最轻阻力弹力带，放在后脑勺/枕骨后方，双手在前方握住两端；下巴微收，颈部保持中立",duration:25,
+       voiceStart:"准备弹力带颈后抗阻。使用最轻阻力。弹力带放在后脑勺后方，不要绕到颈前。下巴微收，颈部保持正直。"});
+
+  for(let set=1; set<=3; set++){
+    add({type:"exercise",section:"弹力带颈后抗阻",round:`第 ${set}/3 组`,name:"弹力带颈后抗阻｜12次",detail:"每次：吸气准备；呼气时轻轻拉紧弹力带并保持头颈稳定，停留2–3秒；吸气缓慢回位。共12次",duration:60,
+         voiceStart:`弹力带颈后抗阻第${set}组，十二次。吸气准备，呼气时轻轻增加张力，保持两到三秒，再吸气慢慢回位。头不要后仰。`,
+         cues:{15:"保持轻阻力，头颈正直。",30:"完成一半。继续配合呼吸。",45:"最后三次。每次停留两到三秒。",55:"最后一次，慢慢回位。"}});
+    if(set<3) add({type:"rest",section:"弹力带颈后抗阻",name:"组间休息",detail:"放松弹力带和颈肩，保持自然呼吸",duration:30,voiceStart:"这一组完成。休息三十秒，放松颈肩。"});
+  }
+  return s;
+}
+
 function buildTimerSteps(day){
-  const p = plans[day];
+  if(currentMember === "daughter") return daughterTimerSteps();
+  const p = getPlan(day);
+  if(!p) return [];
   const steps = [];
   p.sections.forEach(section=>{
     const roundsMatch = section.name.match(/(\d+)\s*轮/);
@@ -640,17 +839,19 @@ function buildTimerSteps(day){
           detail:it[1],
           duration:dur,
           section:section.name,
-          round:rounds>1 ? `第 ${r}/${rounds} 轮` : ""
+          round:rounds>1 ? `第 ${r}/${rounds} 轮` : "",
+          voiceStart:`开始${it[0]}。${it[1]}`
         });
         const rest = parseRest(it[2]);
         if(rest>0){
           steps.push({
             type:"rest",
             name:"休息 / 换动作",
-            detail:`准备下一项`,
+            detail:"准备下一项",
             duration:rest,
             section:section.name,
-            round:rounds>1 ? `第 ${r}/${rounds} 轮` : ""
+            round:rounds>1 ? `第 ${r}/${rounds} 轮` : "",
+            voiceStart:`休息${rest}秒。`
           });
         }
       });
@@ -677,14 +878,29 @@ function renderTabs(active){
 function render(day){
   stopTimer();
   currentDay = day;
-  const p = plans[day];
+  renderFamilyTabs();
   renderTabs(day);
-  document.getElementById("dayTitle").textContent = p.title;
+
+  const p = getPlan(day);
+  const wrap = document.getElementById("plan");
+
+  if(!p){
+    document.getElementById("dayTitle").textContent = `${memberNames[currentMember]}｜计划暂未设置`;
+    document.getElementById("dayFocus").textContent = "已保留家庭成员入口";
+    document.getElementById("totalTime").textContent = "暂无训练";
+    document.getElementById("dayNote").textContent = "爸爸的训练计划尚未定义，当前不会自动套用妈妈或女儿的方案。";
+    wrap.innerHTML = `<section class="placeholder"><h3>爸爸的计划暂未设置</h3><p>后续可以根据年龄、训练目标、腰/膝/肩颈情况单独制定，再加入这里。</p></section>`;
+    resetTimerPanel();
+    renderHistory();
+    return;
+  }
+
+  document.getElementById("dayTitle").textContent =
+    currentMember === "daughter" ? `${day}｜${p.title}` : p.title;
   document.getElementById("dayFocus").textContent = p.focus;
   document.getElementById("totalTime").textContent = p.total;
   document.getElementById("dayNote").textContent = p.note;
 
-  const wrap = document.getElementById("plan");
   wrap.innerHTML = p.sections.map(section => `
     <section class="section ${section.type}">
       <div class="section-head">
@@ -705,7 +921,10 @@ function render(day){
     </section>
   `).join("");
 
-  try { localStorage.setItem("fitness_selected_day", day); } catch(e) {}
+  try {
+    localStorage.setItem("fitness_selected_day", day);
+    localStorage.setItem("fitness_selected_member", currentMember);
+  } catch(e) {}
   resetTimerPanel();
   renderHistory();
   window.scrollTo({top:0,behavior:"smooth"});
@@ -716,12 +935,16 @@ function resetTimerPanel(){
   currentStep = 0;
   remaining = 0;
   stepDuration = 0;
+  lastVoiceCueSecond = -1;
   document.getElementById("timerPhase").textContent = "未开始";
-  document.getElementById("timerExercise").textContent = "点击“开始今日训练”进入自动倒计时";
+  document.getElementById("timerExercise").textContent =
+    timerSteps.length ? "点击“开始今日训练”进入自动倒计时" : "当前家庭成员尚无训练计划";
   document.getElementById("timerCount").textContent = "00:00";
-  document.getElementById("timerSub").textContent = `共 ${timerSteps.length} 个计时步骤，会自动切换。`;
+  document.getElementById("timerSub").textContent =
+    timerSteps.length ? `共 ${timerSteps.length} 个计时步骤，会自动切换。` : "请选择已有训练计划的家庭成员。";
   document.getElementById("progressBar").style.width = "0%";
-  document.getElementById("startBtn").disabled = false;
+  document.getElementById("startBtn").disabled = !timerSteps.length;
+  document.getElementById("completeBtn").disabled = !timerSteps.length;
   document.getElementById("pauseBtn").disabled = true;
   document.getElementById("prevBtn").disabled = true;
   document.getElementById("nextBtn").disabled = true;
@@ -733,7 +956,7 @@ function startWorkout(){
   timerSteps = buildTimerSteps(currentDay);
   if(!timerSteps.length) return;
   currentStep = 0;
-  loadStep();
+  loadStep(true);
   document.getElementById("startBtn").disabled = true;
   document.getElementById("pauseBtn").disabled = false;
   document.getElementById("prevBtn").disabled = false;
@@ -741,7 +964,7 @@ function startWorkout(){
   startTicking();
 }
 
-function loadStep(){
+function loadStep(withVoice=true){
   const st = timerSteps[currentStep];
   if(!st){
     finishWorkout();
@@ -750,7 +973,9 @@ function loadStep(){
   remaining = st.duration;
   stepDuration = st.duration;
   isPaused = false;
+  lastVoiceCueSecond = -1;
   updateTimerUI();
+  if(withVoice) speak(st.voiceStart || `${st.name}，开始。`);
 }
 
 function updateTimerUI(){
@@ -764,6 +989,19 @@ function updateTimerUI(){
     `${st.detail || ""}　步骤 ${currentStep+1}/${timerSteps.length}`;
   const pct = stepDuration ? ((stepDuration-remaining)/stepDuration)*100 : 0;
   document.getElementById("progressBar").style.width = `${Math.min(100,Math.max(0,pct))}%`;
+}
+
+function fireTimedVoiceCue(){
+  if(!voiceEnabled) return;
+  const st = timerSteps[currentStep];
+  if(!st || !st.cues) return;
+  const elapsed = stepDuration - remaining;
+  if(elapsed === lastVoiceCueSecond) return;
+  const cue = st.cues[elapsed];
+  if(cue){
+    lastVoiceCueSecond = elapsed;
+    speak(cue);
+  }
 }
 
 function startTicking(){
@@ -780,9 +1018,10 @@ function startTicking(){
         finishWorkout();
         return;
       }
-      loadStep();
+      loadStep(true);
     }else{
       updateTimerUI();
+      fireTimedVoiceCue();
     }
   },1000);
 }
@@ -791,33 +1030,39 @@ function stopTimer(){
   clearInterval(timerId);
   timerId = null;
   isPaused = false;
+  try { speechSynthesis.cancel(); } catch(e){}
 }
 
 function togglePause(){
   if(!timerId) return;
   isPaused = !isPaused;
   document.getElementById("pauseBtn").textContent = isPaused ? "继续" : "暂停";
-  document.getElementById("timerPhase").textContent =
-    isPaused ? "已暂停" : document.getElementById("timerPhase").textContent.replace("已暂停","");
+  if(isPaused){
+    try { speechSynthesis.cancel(); } catch(e){}
+    document.getElementById("timerPhase").textContent = "已暂停";
+  }else{
+    updateTimerUI();
+    speak("继续训练。");
+  }
 }
 
 function prevStep(){
   if(!timerSteps.length) return;
   currentStep = Math.max(0,currentStep-1);
-  loadStep();
+  loadStep(true);
 }
 
 function nextStep(){
   if(!timerSteps.length) return;
   currentStep += 1;
   if(currentStep >= timerSteps.length) finishWorkout();
-  else loadStep();
+  else loadStep(true);
 }
 
 function finishWorkout(){
   stopTimer();
   document.getElementById("timerPhase").textContent = "训练完成";
-  document.getElementById("timerExercise").textContent = "今天的训练完成了";
+  document.getElementById("timerExercise").textContent = `${memberNames[currentMember]}今天的训练完成了`;
   document.getElementById("timerCount").textContent = "✓";
   document.getElementById("timerSub").textContent = "已自动记录本次完成。";
   document.getElementById("progressBar").style.width = "100%";
@@ -825,6 +1070,7 @@ function finishWorkout(){
   document.getElementById("pauseBtn").disabled = true;
   document.getElementById("prevBtn").disabled = true;
   document.getElementById("nextBtn").disabled = true;
+  speak("今天的训练完成了。做得很好，放松一下。");
   markComplete(true);
 }
 
@@ -854,7 +1100,8 @@ function todayKey(){
 
 function getRecords(){
   try{
-    return JSON.parse(localStorage.getItem("fitness_completion_records") || "[]");
+    const rs = JSON.parse(localStorage.getItem("fitness_completion_records") || "[]");
+    return rs.map(r => ({...r, member:r.member || "mom"}));
   }catch(e){ return []; }
 }
 
@@ -865,16 +1112,22 @@ function saveRecords(records){
 }
 
 function markComplete(auto=false){
+  if(!getPlan(currentDay)) return;
   const records = getRecords();
   const date = todayKey();
-  const exists = records.some(r=>r.date===date && r.day===currentDay);
+  const exists = records.some(r=>r.date===date && r.day===currentDay && r.member===currentMember);
   if(!exists){
-    records.push({date, day:currentDay, title:plans[currentDay].title});
+    records.push({
+      date,
+      day:currentDay,
+      member:currentMember,
+      title:getPlan(currentDay).title
+    });
     saveRecords(records);
   }
   renderHistory();
   if(!auto){
-    document.getElementById("timerSub").textContent = "已记录今天完成训练。";
+    document.getElementById("timerSub").textContent = `已记录${memberNames[currentMember]}今天完成训练。`;
   }
 }
 
@@ -888,21 +1141,24 @@ function startOfWeek(date){
 }
 
 function renderHistory(){
-  const records = getRecords().sort((a,b)=>b.date.localeCompare(a.date));
+  const records = getRecords()
+    .filter(r=>r.member===currentMember)
+    .sort((a,b)=>b.date.localeCompare(a.date));
   const now = new Date();
   const ws = startOfWeek(now);
   const we = new Date(ws); we.setDate(ws.getDate()+7);
-  const weekCount = records.filter(r=>{
+  const weekDates = new Set(records.filter(r=>{
     const d = new Date(r.date+"T00:00:00");
     return d>=ws && d<we;
-  }).length;
+  }).map(r=>r.date));
 
-  document.getElementById("weekDone").textContent = `本周完成 ${weekCount} 天`;
+  document.querySelector(".history-title").textContent = `${memberNames[currentMember]}的完成记录`;
+  document.getElementById("weekDone").textContent = `本周完成 ${weekDates.size} 天`;
   document.getElementById("totalDone").textContent = `累计完成 ${records.length} 次`;
 
   const list = document.getElementById("recordList");
   if(!records.length){
-    list.innerHTML = `<div class="note">还没有完成记录。完成训练后会自动保存在当前浏览器。</div>`;
+    list.innerHTML = `<div class="note">还没有完成记录。完成训练后会自动保存在当前设备。</div>`;
     return;
   }
   list.innerHTML = records.slice(0,10).map(r=>`
@@ -914,12 +1170,22 @@ function renderHistory(){
 }
 
 function clearHistory(){
-  if(confirm("确定清空所有本地完成记录吗？")){
-    localStorage.removeItem("fitness_completion_records");
-    renderHistory();
-  }
+  if(!confirm(`确定清空${memberNames[currentMember]}的本地完成记录吗？`)) return;
+  const records = getRecords().filter(r=>r.member!==currentMember);
+  saveRecords(records);
+  renderHistory();
 }
 
+document.querySelectorAll(".family-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>selectMember(btn.dataset.member));
+});
+document.getElementById("voiceBtn").addEventListener("click",()=>{
+  voiceEnabled = !voiceEnabled;
+  try { localStorage.setItem("fitness_voice_enabled", voiceEnabled ? "1" : "0"); } catch(e){}
+  if(!voiceEnabled){ try { speechSynthesis.cancel(); } catch(e){} }
+  renderFamilyTabs();
+  if(voiceEnabled) speak("语音提醒已开启。");
+});
 document.getElementById("startBtn").addEventListener("click", startWorkout);
 document.getElementById("pauseBtn").addEventListener("click", togglePause);
 document.getElementById("prevBtn").addEventListener("click", prevStep);
@@ -929,6 +1195,10 @@ document.getElementById("clearHistoryBtn").addEventListener("click", clearHistor
 
 let initial = "周一";
 try {
+  const savedMember = localStorage.getItem("fitness_selected_member");
+  if(["mom","dad","daughter"].includes(savedMember)) currentMember = savedMember;
+  const voiceSaved = localStorage.getItem("fitness_voice_enabled");
+  if(voiceSaved !== null) voiceEnabled = voiceSaved === "1";
   const saved = localStorage.getItem("fitness_selected_day");
   if(order.includes(saved)) initial = saved;
   else{
@@ -938,6 +1208,7 @@ try {
   }
 } catch(e){}
 
+renderFamilyTabs();
 render(initial);
 </script>
 
