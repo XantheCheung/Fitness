@@ -1,0 +1,22 @@
+{
+  "name": "一周家庭健身计划",
+  "short_name": "家庭健身",
+  "description": "每日20–30分钟的家庭核心稳定与全身抗阻训练计划",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

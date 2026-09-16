@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f7fb" />
+  <title>一周家庭训练计划</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --primary:#2563eb;
+      --primary-soft:#eaf1ff;
+      --warm:#fff7ed;
+      --warm-text:#9a3412;
+      --main:#eff6ff;
+      --main-text:#1d4ed8;
+      --stretch:#f0fdf4;
+      --stretch-text:#166534;
+      --shadow:0 8px 30px rgba(31,41,55,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+    }
+    .app{
+      max-width:760px;
+      margin:0 auto;
+      padding:18px 14px calc(40px + env(safe-area-inset-bottom));
+    }
+    .hero{
+      background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+      color:#fff;
+      padding:20px 18px;
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
+    }
+    .hero h1{
+      font-size:24px;
+      margin:0 0 8px;
+      letter-spacing:.2px;
+    }
+    .hero p{
+      margin:0;
+      opacity:.92;
+      line-height:1.65;
+      font-size:14px;
+    }
+    .day-tabs{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:8px;
+      margin-bottom:14px;
+    }
+    .day-btn{
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--text);
+      padding:11px 6px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .day-btn.active{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:#fff;
+      box-shadow:0 4px 12px rgba(37,99,235,.22);
+    }
+    .summary{
+      background:var(--card);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+    .summary h2{
+      margin:0 0 8px;
+      font-size:20px;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#f3f4f6;
+      color:#374151;
+      font-size:13px;
+      font-weight:600;
+    }
+    .note{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.65;
+    }
+    .section{
+      background:var(--card);
+      border-radius:16px;
+      margin-bottom:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px;
+      font-weight:800;
+      border-bottom:1px solid var(--line);
+    }
+    .section-head .time{
+      font-size:13px;
+      font-weight:700;
+      color:var(--muted);
+    }
+    .warmup .section-head{background:var(--warm);color:var(--warm-text)}
+    .mainwork .section-head{background:var(--main);color:var(--main-text)}
+    .stretch .section-head{background:var(--stretch);color:var(--stretch-text)}
+    .item{
+      display:grid;
+      grid-template-columns:42px 1fr auto;
+      gap:10px;
+      align-items:start;
+      padding:13px 16px;
+      border-bottom:1px solid var(--line);
+    }
+    .item:last-child{border-bottom:none}
+    .num{
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#f3f4f6;
+      font-weight:800;
+      font-size:13px;
+    }
+    .item-title{
+      font-weight:800;
+      font-size:15px;
+      line-height:1.4;
+    }
+    .item-desc{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .duration{
+      white-space:nowrap;
+      font-size:13px;
+      font-weight:800;
+      color:#111827;
+      background:#f9fafb;
+      padding:5px 8px;
+      border-radius:8px;
+    }
+    .exercise-link{
+      display:inline-block;
+      margin-top:6px;
+      color:var(--primary);
+      font-size:13px;
+      text-decoration:none;
+      font-weight:700;
+    }
+    .footer{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.7;
+      padding:4px 4px 0;
+    }
+    @media(max-width:460px){
+      .day-tabs{grid-template-columns:repeat(4,1fr)}
+      .hero h1{font-size:21px}
+      .item{grid-template-columns:36px 1fr}
+      .duration{grid-column:2;justify-self:start}
+    }
+  
+    .controls{
+      background:var(--card);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+    .controls-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-secondary{background:#eef2f7;color:#1f2937}
+    .btn-success{background:#16a34a;color:#fff}
+    .btn-danger{background:#fee2e2;color:#991b1b}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .timer-panel{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#fafafa;
+    }
+    .timer-label{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+    .timer-exercise{
+      margin-top:4px;
+      font-size:20px;
+      font-weight:900;
+      line-height:1.35;
+    }
+    .timer-count{
+      font-variant-numeric:tabular-nums;
+      font-size:44px;
+      font-weight:900;
+      letter-spacing:1px;
+      margin:8px 0 4px;
+    }
+    .timer-sub{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .progress-wrap{
+      margin-top:10px;
+      height:8px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:var(--primary);
+      transition:width .25s linear;
+    }
+    .history{
+      background:var(--card);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+    .history-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .history-title{
+      font-size:16px;
+      font-weight:900;
+    }
+    .history-stats{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .record-list{
+      margin-top:12px;
+      display:grid;
+      gap:8px;
+    }
+    .record{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:10px;
+      background:#f9fafb;
+      font-size:13px;
+    }
+    .done-badge{
+      color:#166534;
+      background:#dcfce7;
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+  </style>
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="家庭健身">
+
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <h1>一周家庭训练计划</h1>
+      <p>每天约 20–30 分钟｜核心稳定 + 全身抗阻｜低冲击、腰部友好</p>
+    </section>
+
+    <div class="day-tabs" id="dayTabs"></div>
+
+    <section class="summary">
+      <h2 id="dayTitle"></h2>
+      <div id="dayFocus"></div>
+      <div class="meta">
+        <span class="pill" id="totalTime"></span>
+        <span class="pill">强度 RPE 5–7/10</span>
+        <span class="pill">动作慢、稳、不过度追求次数</span>
+      </div>
+      <div class="note" id="dayNote"></div>
+    </section>
+
+    <section class="controls">
+      <div class="controls-row">
+        <button class="btn btn-primary" id="startBtn">开始今日训练</button>
+        <button class="btn btn-secondary" id="pauseBtn" disabled>暂停</button>
+        <button class="btn btn-secondary" id="prevBtn" disabled>上一项</button>
+        <button class="btn btn-secondary" id="nextBtn" disabled>下一项</button>
+        <button class="btn btn-success" id="completeBtn">标记今日完成</button>
+      </div>
+      <div class="timer-panel" id="timerPanel">
+        <div class="timer-label" id="timerPhase">未开始</div>
+        <div class="timer-exercise" id="timerExercise">点击“开始今日训练”进入自动倒计时</div>
+        <div class="timer-count" id="timerCount">00:00</div>
+        <div class="timer-sub" id="timerSub">会按动作和休息顺序自动切换。</div>
+        <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+    </section>
+
+    <section class="history">
+      <div class="history-top">
+        <div class="history-title">完成记录</div>
+        <button class="btn btn-danger" id="clearHistoryBtn">清空记录</button>
+      </div>
+      <div class="history-stats">
+        <span class="pill" id="weekDone">本周完成 0 天</span>
+        <span class="pill" id="totalDone">累计完成 0 次</span>
+      </div>
+      <div class="record-list" id="recordList"></div>
+    </section>
+
+    <div id="plan"></div>
+
+    <div class="footer">
+      提示：如果出现腰部锐痛、明显刺痛、腿部放射痛或麻木，请停止对应动作。普通肌肉酸胀与训练后的轻度疲劳通常可以接受。
+    </div>
+  </main>
+
+<script>
+const plans = {
+  "周一": {
+    title:"周一｜臀腿 + 核心",
+    focus:"重点：臀腿力量、核心稳定、腰椎保护",
+    total:"约 24 分钟",
+    note:"第一次训练建议只做 2 轮，宁可慢一点，也不要为了计时加快动作。",
+    sections:[
+      {type:"warmup", name:"热身", time:"4 分钟", items:[
+        ["原地踏步","逐渐加快，脚掌轻落地","45秒 + 休15秒"],
+        ["肩绕环 + 扩胸","肩膀向后绕，胸口自然打开","45秒 + 休15秒"],
+        ["徒手髋铰链","屁股向后，背部保持自然直线","45秒 + 休15秒"],
+        ["椅子坐站 / 浅蹲","膝盖方向与脚尖一致","45秒 + 休15秒"]
+      ]},
+      {type:"mainwork", name:"主训练｜2 轮", time:"16 分钟", items:[
+        ["椅子深蹲","坐向椅子，起身时脚掌踩稳","40秒 + 休20秒"],
+        ["臀桥","夹臀抬髋，不要用腰向上顶","40秒 + 休20秒"],
+        ["Bird Dog 鸟狗式","对侧手脚伸展，骨盆不要歪；建议左右各 6–8 次","40秒 + 休20秒"],
+        ["Dead Bug 死虫式","腰部保持稳定，腿不要伸得过低；建议左右各 5–8 次","40秒 + 休20秒"],
+        ["椅子深蹲","动作稳定、不要追求速度","40秒 + 休20秒"],
+        ["臀桥","顶端停约1秒","40秒 + 休20秒"],
+        ["Bird Dog 鸟狗式","左右交替；建议左右各 6–8 次","40秒 + 休20秒"],
+        ["Dead Bug 死虫式","左右交替；建议左右各 5–8 次","40秒 + 休20秒"]
+      ]},
+      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
+        ["髋屈肌左","夹臀后再轻轻向前","45秒 + 换边15秒"],
+        ["髋屈肌右","腰不要前拱","45秒 + 换动作15秒"],
+        ["小腿左","脚跟踩地","45秒 + 换边15秒"],
+        ["小腿右","保持自然呼吸","45秒 + 放松15秒"]
+      ]}
+    ]
+  },
+  "周二": {
+    title:"周二｜上肢 + 核心",
+    focus:"重点：胸、背、肩、手臂 + 抗旋转核心",
+    total:"约 24 分钟",
+    note:"墙壁俯卧撑如果太轻松，可以逐渐改成桌边俯卧撑。",
+    sections:[
+      {type:"warmup", name:"热身", time:"4 分钟", items:[
+        ["原地走","自然摆臂","45秒 + 休15秒"],
+        ["肩绕环","肩膀向后绕","45秒 + 休15秒"],
+        ["扩胸 / 胸椎轻旋转","小幅度，避免猛扭腰","45秒 + 休15秒"],
+        ["徒手髋铰链","练习髋部发力模式","45秒 + 休15秒"]
+      ]},
+      {type:"mainwork", name:"主训练｜2 轮", time:"16 分钟", items:[
+        ["墙壁俯卧撑","身体保持一条直线","40秒 + 休20秒"],
+        ["弹力带划船","肩胛骨向后靠拢，不要耸肩","40秒 + 休20秒"],
+        ["Pallof Press 左","身体不要被弹力带拉转","40秒 + 休20秒"],
+        ["Pallof Press 右","骨盆和胸口始终向前","40秒 + 休20秒"],
+        ["墙壁俯卧撑","慢慢靠近墙，再推开","40秒 + 休20秒"],
+        ["弹力带划船","不要用腰后仰借力","40秒 + 休20秒"],
+        ["臀桥","夹臀、腰不过伸","40秒 + 休20秒"],
+        ["Dead Bug","核心保持张力","40秒 + 休20秒"]
+      ]},
+      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
+        ["胸肩左","门框辅助，轻微拉伸","45秒 + 换边15秒"],
+        ["胸肩右","不要耸肩","45秒 + 换动作15秒"],
+        ["髋屈肌左","骨盆保持稳定","45秒 + 换边15秒"],
+        ["髋屈肌右","自然呼吸","45秒 + 放松15秒"]
+      ]}
+    ]
+  },
+  "周三": {
+    title:"周三｜恢复 + 核心稳定",
+    focus:"重点：低强度恢复、臀部稳定、核心激活",
+    total:"约 23 分钟",
+    note:"今天不追求强度，主要目的是让身体恢复，同时保持活动。",
+    sections:[
+      {type:"warmup", name:"轻快走", time:"5 分钟", items:[
+        ["原地快走","前4分钟轻快，最后1分钟逐渐放慢","5分钟"]
+      ]},
+      {type:"mainwork", name:"核心循环｜2 轮", time:"12 分钟", items:[
+        ["Bird Dog","动作慢，保持骨盆稳定；建议左右各 6–8 次","40秒 + 休20秒"],
+        ["Dead Bug","腰部保持稳定；建议左右各 5–8 次","40秒 + 休20秒"],
+        ["蚌式开合 左","脚跟贴住，骨盆不要向后翻；建议左侧 10–15 次","40秒 + 休20秒"],
+        ["蚌式开合 右","感受臀部外侧发力；建议右侧 10–15 次","40秒 + 休20秒"],
+        ["臀桥","臀部发力","40秒 + 休20秒"],
+        ["原地慢走","恢复呼吸","40秒 + 休20秒"]
+      ]},
+      {type:"stretch", name:"泡沫轴 + 拉伸", time:"6 分钟", items:[
+        ["左臀 / 大腿","泡沫轴缓慢滚动","60秒"],
+        ["右臀 / 大腿","避开腰椎直接滚压","60秒"],
+        ["左小腿","缓慢滚动","45秒"],
+        ["右小腿","缓慢滚动","45秒"],
+        ["髋屈肌左","腰不要前拱","45秒"],
+        ["髋屈肌右","自然呼吸","45秒"],
+        ["慢呼吸","放松肩颈","60秒"]
+      ]}
+    ]
+  },
+  "周四": {
+    title:"周四｜全身力量",
+    focus:"重点：全身抗阻，防止肌肉流失",
+    total:"约 26 分钟",
+    note:"如果第三轮动作开始明显变形，可以只做两轮，把剩余时间改成慢走。",
+    sections:[
+      {type:"warmup", name:"热身", time:"4 分钟", items:[
+        ["原地踏步","逐渐升温","45秒 + 休15秒"],
+        ["肩绕环 + 扩胸","肩颈放松","45秒 + 休15秒"],
+        ["髋铰链","屁股向后","45秒 + 休15秒"],
+        ["浅蹲","动作稳定","45秒 + 休15秒"]
+      ]},
+      {type:"mainwork", name:"全身循环｜3 轮", time:"18 分钟", items:[
+        ["椅子深蹲","臀腿发力","40秒 + 休20秒"],
+        ["墙壁 / 桌边俯卧撑","核心收紧","40秒 + 休20秒"],
+        ["弹力带划船","肩胛骨后收","40秒 + 休20秒"],
+        ["臀桥","不要顶腰","40秒 + 休20秒"],
+        ["Pallof Press","左20秒 + 右20秒","40秒 + 休20秒"],
+        ["Dead Bug","左右交替","40秒 + 休20秒"]
+      ]},
+      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
+        ["髋屈肌左","夹臀后轻推髋部","45秒 + 换边15秒"],
+        ["髋屈肌右","保持腰椎自然","45秒 + 换动作15秒"],
+        ["胸肩","轻柔拉伸","45秒 + 休15秒"],
+        ["小腿","脚跟踩地","45秒 + 放松15秒"]
+      ]}
+    ]
+  },
+  "周五": {
+    title:"周五｜核心 + 臀部稳定",
+    focus:"重点：核心稳定、臀中肌、抗旋转",
+    total:"约 24 分钟",
+    note:"核心训练不是追求腰腹酸痛，而是让躯干在动作中保持稳定。",
+    sections:[
+      {type:"warmup", name:"热身", time:"4 分钟", items:[
+        ["原地走","自然摆臂","45秒 + 休15秒"],
+        ["髋铰链","屁股向后","45秒 + 休15秒"],
+        ["浅蹲","膝盖朝向脚尖","45秒 + 休15秒"],
+        ["肩部活动","肩颈放松","45秒 + 休15秒"]
+      ]},
+      {type:"mainwork", name:"核心循环｜2 轮", time:"16 分钟", items:[
+        ["Dead Bug","肋骨不要翘起；建议左右各 5–8 次","40秒 + 休20秒"],
+        ["Bird Dog","骨盆不要歪；建议左右各 6–8 次","40秒 + 休20秒"],
+        ["蚌式开合 左","脚跟保持接触；建议左侧 10–15 次","40秒 + 休20秒"],
+        ["蚌式开合 右","不要让骨盆向后翻；建议右侧 10–15 次","40秒 + 休20秒"],
+        ["臀桥","夹臀抬髋","40秒 + 休20秒"],
+        ["Pallof Press 左","抗旋转；建议左侧 8–10 次","40秒 + 休20秒"],
+        ["Pallof Press 右","胸口朝前；建议右侧 8–10 次","40秒 + 休20秒"],
+        ["原地快走","轻快恢复","40秒 + 休20秒"]
+      ]},
+      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
+        ["髋屈肌","左右各约45秒","90秒"],
+        ["臀部","左右各约45秒","90秒"],
+        ["胸肩 / 小腿","轻柔拉伸","60秒"]
+      ]}
+    ]
+  },
+  "周六": {
+    title:"周六｜全身循环",
+    focus:"重点：轻心肺 + 全身力量",
+    total:"约 25 分钟",
+    note:"依然保持低冲击，不需要跳绳。动作稳定比速度重要。",
+    sections:[
+      {type:"warmup", name:"热身", time:"4 分钟", items:[
+        ["原地踏步","逐渐加快","45秒 + 休15秒"],
+        ["肩绕环","放松上身","45秒 + 休15秒"],
+        ["髋铰链","练习髋部发力","45秒 + 休15秒"],
+        ["浅蹲","轻柔进入状态","45秒 + 休15秒"]
+      ]},
+      {type:"mainwork", name:"全身循环｜3 轮", time:"15 分钟", items:[
+        ["椅子深蹲","稳定控制","40秒 + 休20秒"],
+        ["弹力带划船","背部发力","40秒 + 休20秒"],
+        ["墙壁 / 桌边俯卧撑","胸肩手臂发力","40秒 + 休20秒"],
+        ["臀桥","臀部发力","40秒 + 休20秒"],
+        ["Pallof Press","左20秒 + 右20秒","40秒 + 休20秒"]
+      ]},
+      {type:"mainwork", name:"轻心肺", time:"2 分钟", items:[
+        ["原地快走","稍快40秒 → 慢走20秒 → 重复一次","2分钟"]
+      ]},
+      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
+        ["髋屈肌","左右各约45秒","90秒"],
+        ["臀部","左右各约45秒","90秒"],
+        ["小腿 / 胸肩","轻柔拉伸","60秒"]
+      ]}
+    ]
+  },
+  "周日": {
+    title:"周日｜主动恢复",
+    focus:"重点：恢复、活动度、轻度核心激活",
+    total:"约 22–25 分钟",
+    note:"今天不追求力量刺激，让身体恢复，为下一周做准备。",
+    sections:[
+      {type:"warmup", name:"轻松走", time:"10 分钟", items:[
+        ["原地走 / 家中走动","2分钟轻松 → 6分钟稍快 → 2分钟放慢","10分钟"]
+      ]},
+      {type:"mainwork", name:"活动度", time:"6 分钟", items:[
+        ["猫牛式","动作幅度小，不追求极限","40秒 + 休20秒"],
+        ["髋铰链","保持背部自然","40秒 + 休20秒"],
+        ["肩绕环","肩颈放松","40秒 + 休20秒"],
+        ["胸椎轻旋转","小幅度、不猛扭腰","40秒 + 休20秒"],
+        ["Bird Dog","慢速","40秒 + 休20秒"],
+        ["臀桥","轻松激活臀部","40秒 + 休20秒"]
+      ]},
+      {type:"stretch", name:"拉伸 / 泡沫轴", time:"6 分钟", items:[
+        ["髋屈肌","左右各45秒","90秒"],
+        ["臀部","左右各45秒","90秒"],
+        ["小腿","左右各45秒","90秒"],
+        ["胸肩 + 慢呼吸","保持放松","90秒"]
+      ]}
+    ]
+  }
+};
+
+
+const order = ["周一","周二","周三","周四","周五","周六","周日"];
+let currentDay = "周一";
+let timerSteps = [];
+let currentStep = 0;
+let remaining = 0;
+let stepDuration = 0;
+let timerId = null;
+let isPaused = false;
+let sharedAudioCtx = null;
+
+function unlockAudio(){
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+    if(!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
+    if(sharedAudioCtx.state === "suspended") sharedAudioCtx.resume();
+    const osc = sharedAudioCtx.createOscillator();
+    const gain = sharedAudioCtx.createGain();
+    gain.gain.value = 0.0001;
+    osc.connect(gain); gain.connect(sharedAudioCtx.destination);
+    osc.start(); osc.stop(sharedAudioCtx.currentTime + 0.02);
+  }catch(e){}
+}
+
+function parseDuration(text){
+  if(!text) return 40;
+  let m = text.match(/(\d+)\s*分钟/);
+  if(m) return parseInt(m[1],10)*60;
+  m = text.match(/(\d+)\s*秒/);
+  if(m) return parseInt(m[1],10);
+  return 40;
+}
+
+function parseRest(text){
+  if(!text) return 0;
+  let m = text.match(/休\s*(\d+)\s*秒/);
+  if(m) return parseInt(m[1],10);
+  m = text.match(/换边\s*(\d+)\s*秒/);
+  if(m) return parseInt(m[1],10);
+  m = text.match(/换动作\s*(\d+)\s*秒/);
+  if(m) return parseInt(m[1],10);
+  return 0;
+}
+
+function buildTimerSteps(day){
+  const p = plans[day];
+  const steps = [];
+  p.sections.forEach(section=>{
+    const roundsMatch = section.name.match(/(\d+)\s*轮/);
+    const rounds = roundsMatch ? parseInt(roundsMatch[1],10) : 1;
+    for(let r=1;r<=rounds;r++){
+      section.items.forEach(it=>{
+        const dur = parseDuration(it[2]);
+        steps.push({
+          type:"exercise",
+          name:it[0],
+          detail:it[1],
+          duration:dur,
+          section:section.name,
+          round:rounds>1 ? `第 ${r}/${rounds} 轮` : ""
+        });
+        const rest = parseRest(it[2]);
+        if(rest>0){
+          steps.push({
+            type:"rest",
+            name:"休息 / 换动作",
+            detail:`准备下一项`,
+            duration:rest,
+            section:section.name,
+            round:rounds>1 ? `第 ${r}/${rounds} 轮` : ""
+          });
+        }
+      });
+    }
+  });
+  return steps;
+}
+
+function fmt(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+}
+
+function renderTabs(active){
+  const el = document.getElementById("dayTabs");
+  el.innerHTML = order.map(d => `<button class="day-btn ${d===active?'active':''}" data-day="${d}">${d}</button>`).join("");
+  el.querySelectorAll(".day-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>render(btn.dataset.day));
+  });
+}
+
+function render(day){
+  stopTimer();
+  currentDay = day;
+  const p = plans[day];
+  renderTabs(day);
+  document.getElementById("dayTitle").textContent = p.title;
+  document.getElementById("dayFocus").textContent = p.focus;
+  document.getElementById("totalTime").textContent = p.total;
+  document.getElementById("dayNote").textContent = p.note;
+
+  const wrap = document.getElementById("plan");
+  wrap.innerHTML = p.sections.map(section => `
+    <section class="section ${section.type}">
+      <div class="section-head">
+        <span>${section.name}</span>
+        <span class="time">${section.time}</span>
+      </div>
+      ${section.items.map((it,i)=>`
+        <div class="item">
+          <div class="num">${i+1}</div>
+          <div>
+            <div class="item-title">${it[0]}</div>
+            <div class="item-desc">${it[1]}</div>
+            ${it[0].includes("蚌式开合") ? `<a class="exercise-link" href="https://health.clevelandclinic.org/glute-exercises" target="_blank" rel="noopener">查看蚌式开合动作参考 ↗</a>` : ""}
+          </div>
+          <div class="duration">${it[2]}</div>
+        </div>
+      `).join("")}
+    </section>
+  `).join("");
+
+  try { localStorage.setItem("fitness_selected_day", day); } catch(e) {}
+  resetTimerPanel();
+  renderHistory();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function resetTimerPanel(){
+  timerSteps = buildTimerSteps(currentDay);
+  currentStep = 0;
+  remaining = 0;
+  stepDuration = 0;
+  document.getElementById("timerPhase").textContent = "未开始";
+  document.getElementById("timerExercise").textContent = "点击“开始今日训练”进入自动倒计时";
+  document.getElementById("timerCount").textContent = "00:00";
+  document.getElementById("timerSub").textContent = `共 ${timerSteps.length} 个计时步骤，会自动切换。`;
+  document.getElementById("progressBar").style.width = "0%";
+  document.getElementById("startBtn").disabled = false;
+  document.getElementById("pauseBtn").disabled = true;
+  document.getElementById("prevBtn").disabled = true;
+  document.getElementById("nextBtn").disabled = true;
+  document.getElementById("pauseBtn").textContent = "暂停";
+}
+
+function startWorkout(){
+  unlockAudio();
+  timerSteps = buildTimerSteps(currentDay);
+  if(!timerSteps.length) return;
+  currentStep = 0;
+  loadStep();
+  document.getElementById("startBtn").disabled = true;
+  document.getElementById("pauseBtn").disabled = false;
+  document.getElementById("prevBtn").disabled = false;
+  document.getElementById("nextBtn").disabled = false;
+  startTicking();
+}
+
+function loadStep(){
+  const st = timerSteps[currentStep];
+  if(!st){
+    finishWorkout();
+    return;
+  }
+  remaining = st.duration;
+  stepDuration = st.duration;
+  isPaused = false;
+  updateTimerUI();
+}
+
+function updateTimerUI(){
+  const st = timerSteps[currentStep];
+  if(!st) return;
+  document.getElementById("timerPhase").textContent =
+    `${st.type==="rest" ? "休息" : "训练"} · ${st.section}${st.round ? " · "+st.round : ""}`;
+  document.getElementById("timerExercise").textContent = st.name;
+  document.getElementById("timerCount").textContent = fmt(remaining);
+  document.getElementById("timerSub").textContent =
+    `${st.detail || ""}　步骤 ${currentStep+1}/${timerSteps.length}`;
+  const pct = stepDuration ? ((stepDuration-remaining)/stepDuration)*100 : 0;
+  document.getElementById("progressBar").style.width = `${Math.min(100,Math.max(0,pct))}%`;
+}
+
+function startTicking(){
+  clearInterval(timerId);
+  timerId = setInterval(()=>{
+    if(isPaused) return;
+    remaining -= 1;
+    if(remaining <= 0){
+      remaining = 0;
+      updateTimerUI();
+      beep();
+      currentStep += 1;
+      if(currentStep >= timerSteps.length){
+        finishWorkout();
+        return;
+      }
+      loadStep();
+    }else{
+      updateTimerUI();
+    }
+  },1000);
+}
+
+function stopTimer(){
+  clearInterval(timerId);
+  timerId = null;
+  isPaused = false;
+}
+
+function togglePause(){
+  if(!timerId) return;
+  isPaused = !isPaused;
+  document.getElementById("pauseBtn").textContent = isPaused ? "继续" : "暂停";
+  document.getElementById("timerPhase").textContent =
+    isPaused ? "已暂停" : document.getElementById("timerPhase").textContent.replace("已暂停","");
+}
+
+function prevStep(){
+  if(!timerSteps.length) return;
+  currentStep = Math.max(0,currentStep-1);
+  loadStep();
+}
+
+function nextStep(){
+  if(!timerSteps.length) return;
+  currentStep += 1;
+  if(currentStep >= timerSteps.length) finishWorkout();
+  else loadStep();
+}
+
+function finishWorkout(){
+  stopTimer();
+  document.getElementById("timerPhase").textContent = "训练完成";
+  document.getElementById("timerExercise").textContent = "今天的训练完成了";
+  document.getElementById("timerCount").textContent = "✓";
+  document.getElementById("timerSub").textContent = "已自动记录本次完成。";
+  document.getElementById("progressBar").style.width = "100%";
+  document.getElementById("startBtn").disabled = false;
+  document.getElementById("pauseBtn").disabled = true;
+  document.getElementById("prevBtn").disabled = true;
+  document.getElementById("nextBtn").disabled = true;
+  markComplete(true);
+}
+
+function beep(){
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+    if(!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
+    if(sharedAudioCtx.state === "suspended") sharedAudioCtx.resume();
+    const osc = sharedAudioCtx.createOscillator();
+    const gain = sharedAudioCtx.createGain();
+    osc.connect(gain); gain.connect(sharedAudioCtx.destination);
+    osc.frequency.value = 880;
+    gain.gain.value = 0.05;
+    osc.start();
+    osc.stop(sharedAudioCtx.currentTime + 0.12);
+  }catch(e){}
+}
+
+function todayKey(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function getRecords(){
+  try{
+    return JSON.parse(localStorage.getItem("fitness_completion_records") || "[]");
+  }catch(e){ return []; }
+}
+
+function saveRecords(records){
+  try{
+    localStorage.setItem("fitness_completion_records", JSON.stringify(records));
+  }catch(e){}
+}
+
+function markComplete(auto=false){
+  const records = getRecords();
+  const date = todayKey();
+  const exists = records.some(r=>r.date===date && r.day===currentDay);
+  if(!exists){
+    records.push({date, day:currentDay, title:plans[currentDay].title});
+    saveRecords(records);
+  }
+  renderHistory();
+  if(!auto){
+    document.getElementById("timerSub").textContent = "已记录今天完成训练。";
+  }
+}
+
+function startOfWeek(date){
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day===0 ? -6 : 1-day;
+  d.setDate(d.getDate()+diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function renderHistory(){
+  const records = getRecords().sort((a,b)=>b.date.localeCompare(a.date));
+  const now = new Date();
+  const ws = startOfWeek(now);
+  const we = new Date(ws); we.setDate(ws.getDate()+7);
+  const weekCount = records.filter(r=>{
+    const d = new Date(r.date+"T00:00:00");
+    return d>=ws && d<we;
+  }).length;
+
+  document.getElementById("weekDone").textContent = `本周完成 ${weekCount} 天`;
+  document.getElementById("totalDone").textContent = `累计完成 ${records.length} 次`;
+
+  const list = document.getElementById("recordList");
+  if(!records.length){
+    list.innerHTML = `<div class="note">还没有完成记录。完成训练后会自动保存在当前浏览器。</div>`;
+    return;
+  }
+  list.innerHTML = records.slice(0,10).map(r=>`
+    <div class="record">
+      <div><strong>${r.date}</strong>　${r.day}</div>
+      <span class="done-badge">已完成</span>
+    </div>
+  `).join("");
+}
+
+function clearHistory(){
+  if(confirm("确定清空所有本地完成记录吗？")){
+    localStorage.removeItem("fitness_completion_records");
+    renderHistory();
+  }
+}
+
+document.getElementById("startBtn").addEventListener("click", startWorkout);
+document.getElementById("pauseBtn").addEventListener("click", togglePause);
+document.getElementById("prevBtn").addEventListener("click", prevStep);
+document.getElementById("nextBtn").addEventListener("click", nextStep);
+document.getElementById("completeBtn").addEventListener("click", ()=>markComplete(false));
+document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
+
+let initial = "周一";
+try {
+  const saved = localStorage.getItem("fitness_selected_day");
+  if(order.includes(saved)) initial = saved;
+  else{
+    const jsDay = new Date().getDay();
+    const map = {1:"周一",2:"周二",3:"周三",4:"周四",5:"周五",6:"周六",0:"周日"};
+    initial = map[jsDay] || "周一";
+  }
+} catch(e){}
+
+render(initial);
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
