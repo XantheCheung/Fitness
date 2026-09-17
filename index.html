@@ -1,1438 +1,998 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f5f7fb" />
-  <title>一周家庭训练计划</title>
-  <style>
-    :root{
-      --bg:#f5f7fb;
-      --card:#ffffff;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --primary:#2563eb;
-      --primary-soft:#eaf1ff;
-      --warm:#fff7ed;
-      --warm-text:#9a3412;
-      --main:#eff6ff;
-      --main-text:#1d4ed8;
-      --stretch:#f0fdf4;
-      --stretch-text:#166534;
-      --shadow:0 8px 30px rgba(31,41,55,.08);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-    }
-    .app{
-      max-width:760px;
-      margin:0 auto;
-      padding:18px 14px calc(40px + env(safe-area-inset-bottom));
-    }
-    .hero{
-      background:linear-gradient(135deg,#1d4ed8,#3b82f6);
-      color:#fff;
-      padding:20px 18px;
-      border-radius:20px;
-      box-shadow:var(--shadow);
-      margin-bottom:16px;
-    }
-    .hero h1{
-      font-size:24px;
-      margin:0 0 8px;
-      letter-spacing:.2px;
-    }
-    .hero p{
-      margin:0;
-      opacity:.92;
-      line-height:1.65;
-      font-size:14px;
-    }
-    .day-tabs{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:8px;
-      margin-bottom:14px;
-    }
-    .day-btn{
-      border:1px solid var(--line);
-      background:var(--card);
-      color:var(--text);
-      padding:11px 6px;
-      border-radius:12px;
-      font-weight:700;
-      font-size:14px;
-      cursor:pointer;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .day-btn.active{
-      background:var(--primary);
-      border-color:var(--primary);
-      color:#fff;
-      box-shadow:0 4px 12px rgba(37,99,235,.22);
-    }
-    .summary{
-      background:var(--card);
-      border-radius:16px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      margin-bottom:14px;
-    }
-    .summary h2{
-      margin:0 0 8px;
-      font-size:20px;
-    }
-    .meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:10px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      padding:6px 10px;
-      border-radius:999px;
-      background:#f3f4f6;
-      color:#374151;
-      font-size:13px;
-      font-weight:600;
-    }
-    .note{
-      margin-top:12px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.65;
-    }
-    .section{
-      background:var(--card);
-      border-radius:16px;
-      margin-bottom:14px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .section-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:14px 16px;
-      font-weight:800;
-      border-bottom:1px solid var(--line);
-    }
-    .section-head .time{
-      font-size:13px;
-      font-weight:700;
-      color:var(--muted);
-    }
-    .warmup .section-head{background:var(--warm);color:var(--warm-text)}
-    .mainwork .section-head{background:var(--main);color:var(--main-text)}
-    .stretch .section-head{background:var(--stretch);color:var(--stretch-text)}
-    .item{
-      display:grid;
-      grid-template-columns:42px 1fr auto;
-      gap:10px;
-      align-items:start;
-      padding:13px 16px;
-      border-bottom:1px solid var(--line);
-    }
-    .item:last-child{border-bottom:none}
-    .num{
-      width:30px;
-      height:30px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#f3f4f6;
-      font-weight:800;
-      font-size:13px;
-    }
-    .item-title{
-      font-weight:800;
-      font-size:15px;
-      line-height:1.4;
-    }
-    .item-desc{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
-    }
-    .duration{
-      white-space:nowrap;
-      font-size:13px;
-      font-weight:800;
-      color:#111827;
-      background:#f9fafb;
-      padding:5px 8px;
-      border-radius:8px;
-    }
-    .exercise-link{
-      display:inline-block;
-      margin-top:6px;
-      color:var(--primary);
-      font-size:13px;
-      text-decoration:none;
-      font-weight:700;
-    }
-    .footer{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.7;
-      padding:4px 4px 0;
-    }
-    @media(max-width:460px){
-      .day-tabs{grid-template-columns:repeat(4,1fr)}
-      .hero h1{font-size:21px}
-      .item{grid-template-columns:36px 1fr}
-      .duration{grid-column:2;justify-self:start}
-    }
-  
-    .controls{
-      background:var(--card);
-      border-radius:16px;
-      padding:14px;
-      box-shadow:var(--shadow);
-      margin-bottom:14px;
-    }
-    .controls-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-    .btn{
-      border:none;
-      border-radius:12px;
-      padding:10px 14px;
-      font-size:14px;
-      font-weight:800;
-      cursor:pointer;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .btn-primary{background:var(--primary);color:#fff}
-    .btn-secondary{background:#eef2f7;color:#1f2937}
-    .btn-success{background:#16a34a;color:#fff}
-    .btn-danger{background:#fee2e2;color:#991b1b}
-    .btn:disabled{opacity:.45;cursor:not-allowed}
-    .timer-panel{
-      margin-top:12px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      background:#fafafa;
-    }
-    .timer-label{
-      color:var(--muted);
-      font-size:13px;
-      font-weight:700;
-    }
-    .timer-exercise{
-      margin-top:4px;
-      font-size:20px;
-      font-weight:900;
-      line-height:1.35;
-    }
-    .timer-count{
-      font-variant-numeric:tabular-nums;
-      font-size:44px;
-      font-weight:900;
-      letter-spacing:1px;
-      margin:8px 0 4px;
-    }
-    .timer-sub{
-      font-size:13px;
-      color:var(--muted);
-      line-height:1.5;
-    }
-    .progress-wrap{
-      margin-top:10px;
-      height:8px;
-      background:#e5e7eb;
-      border-radius:999px;
-      overflow:hidden;
-    }
-    .progress-bar{
-      height:100%;
-      width:0%;
-      background:var(--primary);
-      transition:width .25s linear;
-    }
-    .history{
-      background:var(--card);
-      border-radius:16px;
-      padding:14px;
-      box-shadow:var(--shadow);
-      margin-bottom:14px;
-    }
-    .history-top{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .history-title{
-      font-size:16px;
-      font-weight:900;
-    }
-    .history-stats{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .record-list{
-      margin-top:12px;
-      display:grid;
-      gap:8px;
-    }
-    .record{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      padding:10px 12px;
-      border-radius:10px;
-      background:#f9fafb;
-      font-size:13px;
-    }
-    .done-badge{
-      color:#166534;
-      background:#dcfce7;
-      padding:4px 8px;
-      border-radius:999px;
-      font-weight:800;
-      white-space:nowrap;
-    }
-
-  
-    .family-card{
-      background:var(--card);
-      border-radius:16px;
-      padding:14px;
-      box-shadow:var(--shadow);
-      margin-bottom:14px;
-    }
-    .family-title{
-      font-size:13px;
-      color:var(--muted);
-      font-weight:800;
-      margin-bottom:9px;
-    }
-    .family-tabs{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:8px;
-    }
-    .family-btn{
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:12px;
-      padding:12px 8px;
-      font-size:15px;
-      font-weight:900;
-      cursor:pointer;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .family-btn.active{
-      background:#111827;
-      border-color:#111827;
-      color:#fff;
-    }
-    .voice-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-top:12px;
-      padding-top:12px;
-      border-top:1px solid var(--line);
-    }
-    .voice-copy{
-      font-size:13px;
-      color:var(--muted);
-      line-height:1.5;
-    }
-    .placeholder{
-      background:var(--card);
-      border-radius:16px;
-      padding:22px 16px;
-      box-shadow:var(--shadow);
-      margin-bottom:14px;
-      text-align:center;
-    }
-    .placeholder h3{margin:0 0 8px;font-size:18px}
-    .placeholder p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
-
-</style>
-
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fa">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="家庭健身">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>家庭健身</title>
+  <style>
+    :root{
+      --bg:#f7f8fa; --card:#fff; --text:#172033; --muted:#697386; --line:#e6e9ef;
+      --primary:#315efb; --primary-soft:#eef2ff; --success:#138a55; --success-soft:#eaf8f1;
+      --warning:#9a6700; --warning-soft:#fff6d8; --danger:#b42318; --radius:18px;
+      --shadow:0 8px 24px rgba(23,32,51,.07); --dock-h:88px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    button,a{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;padding:0 14px calc(var(--dock-h) + 28px + env(safe-area-inset-bottom))}
+    .top{position:sticky;top:0;z-index:20;background:rgba(247,248,250,.94);backdrop-filter:blur(16px);padding:10px 0 10px;border-bottom:1px solid rgba(230,233,239,.85)}
+    .top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .brand{font-size:20px;font-weight:900;letter-spacing:-.3px}
+    .wake{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#eef1f5;color:var(--muted);font-size:12px;font-weight:800;white-space:nowrap}
+    .wake.on{background:var(--success-soft);color:var(--success)} .wake.warn{background:var(--warning-soft);color:var(--warning)}
+    .member-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+    .member-btn,.day-btn{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;min-height:40px;font-weight:800}
+    .member-btn.active,.day-btn.active{background:var(--text);border-color:var(--text);color:#fff}
+    .days{display:flex;gap:7px;overflow:auto;padding:9px 0 1px;scrollbar-width:none}.days::-webkit-scrollbar{display:none}
+    .day-btn{min-width:56px;padding:0 9px}
+    .session-card{margin:14px 0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+    .session-label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+    .session-title{font-size:20px;font-weight:900;line-height:1.35;margin-top:4px}
+    .session-focus{font-size:13px;color:var(--muted);line-height:1.6;margin-top:5px}
+    .session-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+    .stat{background:#f7f8fa;border-radius:12px;padding:10px 9px}.stat strong{display:block;font-size:17px}.stat span{font-size:11px;color:var(--muted);font-weight:700}
+    .progress-meta{display:flex;justify-content:space-between;align-items:center;margin-top:13px;font-size:12px;color:var(--muted);font-weight:800}
+    .progress{height:8px;background:#e9edf3;border-radius:999px;overflow:hidden;margin-top:6px}.progress>div{height:100%;width:0;background:var(--primary);transition:width .25s ease}
+    .note{margin-top:12px;padding:10px 12px;background:#fafbfc;border-radius:12px;color:var(--muted);font-size:12px;line-height:1.6}
+    .section{margin:18px 0}.section-head{display:flex;justify-content:space-between;align-items:end;margin:0 3px 8px}.section-head h2{font-size:15px;margin:0}.section-head span{font-size:12px;color:var(--muted)}
+    .exercise{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:9px 0;transition:.2s ease;scroll-margin-top:170px;scroll-margin-bottom:120px}
+    .exercise.current{border-color:var(--primary);box-shadow:0 0 0 3px rgba(49,94,251,.09),var(--shadow)}
+    .exercise.current:before{content:"";position:absolute;left:-1px;top:14px;bottom:14px;width:4px;background:var(--primary);border-radius:0 6px 6px 0}
+    .exercise.done{background:#fbfcfb;border-color:#d8eee2}.exercise.done .step-num{background:var(--success);color:#fff}
+    .exercise-grid{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:start}
+    .step-num{width:31px;height:31px;border-radius:10px;background:#f0f2f6;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+    .ex-title{font-size:15px;font-weight:900;line-height:1.35}.ex-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-top:4px}
+    .ex-plan{display:inline-flex;margin-top:8px;padding:5px 8px;border-radius:8px;background:#f4f6f8;font-size:11px;font-weight:800;color:#4d586a}
+    .ex-time{margin-top:6px;font-size:12px;font-weight:800;color:var(--primary)}
+    .ex-actions{display:flex;gap:7px}.icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text)}
+    .detail-link{display:inline-flex;align-items:center;gap:5px;margin-top:9px;color:var(--primary);text-decoration:none;font-size:12px;font-weight:850}
 
+    .inline-guide{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#fafbfc;overflow:hidden}
+    .inline-guide>summary{list-style:none;min-height:42px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;font-size:12px;font-weight:900;color:#3d485a;-webkit-tap-highlight-color:transparent}
+    .inline-guide>summary::-webkit-details-marker{display:none}
+    .inline-guide>summary:after{content:"⌄";font-size:17px;line-height:1;color:var(--muted);transition:transform .18s ease}
+    .inline-guide[open]>summary:after{transform:rotate(180deg)}
+    .inline-guide[open]>summary{border-bottom:1px solid var(--line);background:#fff}
+    .inline-guide-body{display:grid;gap:8px;padding:10px}
+    .inline-guide-item{background:#fff;border:1px solid #edf0f4;border-radius:10px;padding:9px 10px}
+    .inline-guide-item strong{display:flex;align-items:center;gap:5px;font-size:11px;margin-bottom:4px;color:#293348}
+    .inline-guide-item p{margin:0;font-size:12px;line-height:1.58;color:var(--muted)}
+    .inline-guide-item.error strong{color:#9b2c24}
+    .inline-guide-item.breathe strong{color:#166534}
+    .inline-guide-item.beginner strong{color:#6842a5}
+
+    .empty{padding:28px 16px;text-align:center;color:var(--muted)}
+    .history{margin:20px 0 8px}.history summary{font-weight:900;cursor:pointer}.record{margin-top:9px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;font-size:12px}.record-top{display:flex;justify-content:space-between;gap:10px}.record-items{margin-top:8px;color:var(--muted);line-height:1.65}
+    .dock{position:fixed;z-index:50;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px max(10px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right))}
+    .dock-inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .dock button{min-height:58px;border:0;border-radius:13px;background:#f2f4f7;color:#293348;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:850}
+    .dock button .ico{font-size:19px;line-height:1}.dock button.primary{background:var(--primary);color:#fff}.dock button.success{background:var(--success-soft);color:var(--success)}.dock button:disabled{opacity:.38}
+    .dock button.skip-rest{background:#fff3df;color:#a05b00}
+    .dock button[hidden]{display:none!important}
+    .dock-inner.resting{grid-template-columns:repeat(6,1fr)}
+    .rest-banner{display:none;margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#fff5e6;color:#8a5200;font-size:12px;font-weight:850;text-align:center}
+    .rest-banner.show{display:block}
+    .set-status{display:none;margin-top:7px;font-size:11px;font-weight:900;color:var(--primary)}
+    .set-status.show{display:block}
+
+    .toast{position:fixed;z-index:80;left:50%;bottom:calc(var(--dock-h) + 26px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);max-width:88%;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:750;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .detail-view{display:none;padding-top:12px}.detail-view.show{display:block}.home-view.hide{display:none}
+    .back{border:0;background:#eef1f5;border-radius:11px;padding:10px 12px;font-weight:850;color:var(--text)}
+    .detail-hero{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:12px;box-shadow:var(--shadow)}
+    .detail-visual{height:170px;border-radius:16px;background:linear-gradient(145deg,#f1f4f9,#e8edff);display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .figure{width:120px;height:120px;position:relative}.figure .head{position:absolute;width:28px;height:28px;border:6px solid #35415a;border-radius:50%;left:46px;top:6px}.figure .body{position:absolute;width:8px;height:58px;background:#35415a;border-radius:8px;left:56px;top:36px}.figure .arm{position:absolute;width:64px;height:7px;background:#35415a;border-radius:8px;left:28px;top:50px}.figure .leg1,.figure .leg2{position:absolute;width:7px;height:47px;background:#35415a;border-radius:8px;top:88px;transform-origin:top}.figure .leg1{left:56px;transform:rotate(23deg)}.figure .leg2{left:58px;transform:rotate(-23deg)}
+    .detail-title{font-size:24px;font-weight:950;margin:16px 0 4px}.detail-sub{color:var(--muted);font-size:13px;line-height:1.6}
+    .guide{margin-top:14px;display:grid;gap:10px}.guide-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}.guide-card h3{font-size:13px;margin:0 0 6px}.guide-card p{font-size:13px;line-height:1.7;color:#4d586a;margin:0}
+    .media-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.media-row a,.speak-detail{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:12px;text-decoration:none;font-weight:900;font-size:13px}.media-row a{background:#eef2ff;color:var(--primary)}.speak-detail{width:100%;margin-top:8px;border:0;background:#172033;color:white}
+    @media(max-width:420px){.session-title{font-size:18px}.session-stats{grid-template-columns:1fr 1fr 1fr}.exercise-grid{grid-template-columns:34px 1fr auto}.ex-actions{flex-direction:column}.dock button{min-height:56px}.brand{font-size:18px}}
+  </style>
 </head>
 <body>
-  <main class="app">
-    <section class="hero">
-      <h1>一周家庭训练计划</h1>
-      <p>每天约 20–30 分钟｜核心稳定 + 全身抗阻｜低冲击、腰部友好</p>
-    </section>
-
-
-    <section class="family-card">
-      <div class="family-title">选择家庭成员</div>
-      <div class="family-tabs" id="familyTabs">
-        <button class="family-btn active" data-member="mom">妈妈</button>
-        <button class="family-btn" data-member="dad">爸爸</button>
-        <button class="family-btn" data-member="daughter">女儿</button>
+  <div class="app">
+    <div class="top">
+      <div class="top-row"><div class="brand">家庭健身</div><div id="wakeBadge" class="wake">☀️ 开始后保持常亮</div></div>
+      <div id="memberTabs" class="member-tabs">
+        <button class="member-btn active" data-member="mom">妈妈</button>
+        <button class="member-btn" data-member="dad">爸爸</button>
+        <button class="member-btn" data-member="daughter">女儿</button>
       </div>
-      <div class="voice-row">
-        <div class="voice-copy">语音提醒：动作开始、节奏、换边/换方向和休息提醒</div>
-        <button class="btn btn-secondary" id="voiceBtn">语音提醒：开</button>
-      </div>
-    </section>
-
-    <div class="day-tabs" id="dayTabs"></div>
-
-    <section class="summary">
-      <h2 id="dayTitle"></h2>
-      <div id="dayFocus"></div>
-      <div class="meta">
-        <span class="pill" id="totalTime"></span>
-        <span class="pill">强度 RPE 5–7/10</span>
-        <span class="pill">动作慢、稳、不过度追求次数</span>
-      </div>
-      <div class="note" id="dayNote"></div>
-    </section>
-
-    <section class="controls">
-      <div class="controls-row">
-        <button class="btn btn-primary" id="startBtn">开始今日训练</button>
-        <button class="btn btn-secondary" id="pauseBtn" disabled>暂停</button>
-        <button class="btn btn-secondary" id="prevBtn" disabled>上一项</button>
-        <button class="btn btn-secondary" id="nextBtn" disabled>下一项</button>
-        <button class="btn btn-success" id="completeBtn">标记今日完成</button>
-      </div>
-      <div class="timer-panel" id="timerPanel">
-        <div class="timer-label" id="timerPhase">未开始</div>
-        <div class="timer-exercise" id="timerExercise">点击“开始今日训练”进入自动倒计时</div>
-        <div class="timer-count" id="timerCount">00:00</div>
-        <div class="timer-sub" id="timerSub">会按动作和休息顺序自动切换。</div>
-        <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
-      </div>
-    </section>
-
-    <section class="history">
-      <div class="history-top">
-        <div class="history-title">完成记录</div>
-        <button class="btn btn-danger" id="clearHistoryBtn">清空记录</button>
-      </div>
-      <div class="history-stats">
-        <span class="pill" id="weekDone">本周完成 0 天</span>
-        <span class="pill" id="totalDone">累计完成 0 次</span>
-      </div>
-      <div class="record-list" id="recordList"></div>
-    </section>
-
-    <div id="plan"></div>
-
-    <div class="footer">
-      提示：如果出现腰部锐痛、明显刺痛、腿部放射痛或麻木，请停止对应动作。普通肌肉酸胀与训练后的轻度疲劳通常可以接受。
+      <div id="dayTabs" class="days"></div>
     </div>
-  </main>
+
+    <main id="homeView" class="home-view">
+      <section class="session-card">
+        <div class="session-label">今日训练</div>
+        <div id="sessionTitle" class="session-title"></div>
+        <div id="sessionFocus" class="session-focus"></div>
+        <div class="session-stats">
+          <div class="stat"><strong id="sessionElapsed">00:00</strong><span>本次总时长</span></div>
+          <div class="stat"><strong id="currentElapsed">00:00</strong><span id="currentTimerLabel">当前动作</span></div>
+          <div class="stat"><strong id="progressCount">0/0</strong><span>完成进度</span></div>
+        </div>
+        <div class="progress-meta"><span>训练进度</span><span id="progressPct">0%</span></div>
+        <div class="progress"><div id="progressBar"></div></div><div id="restBanner" class="rest-banner" aria-live="polite"></div>
+        <div id="sessionNote" class="note"></div>
+      </section>
+      <div id="planList"></div>
+      <details class="history"><summary id="historyTitle">完成记录</summary><div id="historyList"></div></details>
+    </main>
+
+    <main id="detailView" class="detail-view">
+      <button id="backBtn" class="back">← 返回训练</button>
+      <section class="detail-hero">
+        <div class="detail-visual" aria-label="动作示意图"><div class="figure" aria-hidden="true"><span class="head"></span><span class="body"></span><span class="arm"></span><span class="leg1"></span><span class="leg2"></span></div></div>
+        <div id="detailTitle" class="detail-title"></div>
+        <div id="detailPlan" class="detail-sub"></div>
+        <button id="detailSpeak" class="speak-detail">🔊 收听动作要领</button>
+        <div class="guide">
+          <div class="guide-card"><h3>动作要点</h3><p id="detailPoints"></p></div>
+          <div class="guide-card"><h3>常见错误</h3><p id="detailErrors"></p></div>
+          <div class="guide-card"><h3>呼吸节奏</h3><p id="detailBreathing"></p></div>
+          <div class="guide-card"><h3>初学者替代</h3><p id="detailBeginner"></p></div>
+        </div>
+        <div class="media-row"><a id="imageDemo" target="_blank" rel="noopener">🖼 图片演示</a><a id="videoDemo" target="_blank" rel="noopener">▶️ 视频演示</a></div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="dock" aria-label="训练控制">
+    <div class="dock-inner">
+      <button id="startBtn" class="primary"><span class="ico">▶️</span><span>开始锻炼</span></button>
+      <button id="pauseBtn" disabled><span class="ico">⏸</span><span>暂停</span></button>
+      <button id="prevBtn" disabled><span class="ico">←</span><span>前一项</span></button>
+      <button id="nextBtn" disabled><span class="ico">→</span><span>后一项</span></button>
+      <button id="completeBtn" class="success" disabled><span class="ico">✓</span><span>标记完成</span></button>
+      <button id="skipRestBtn" class="skip-rest" hidden><span class="ico">⏭</span><span>略过休息</span></button>
+    </div>
+  </nav>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
 const momPlans = {
-  "周一": {
-    title:"周一｜臀腿 + 核心",
-    focus:"重点：臀腿力量、核心稳定、腰椎保护",
-    total:"约 24 分钟",
-    note:"第一次训练建议只做 2 轮，宁可慢一点，也不要为了计时加快动作。",
+  "周一":{
+    title:"妈妈｜周一下肢 + 核心",
+    focus:"约30–35分钟｜臀腿力量 + 核心稳定",
+    total:"约 30–35 分钟",
+    note:"第1–2周按页面默认2组执行；动作稳定后，第3周起可把杯式深蹲、罗马尼亚硬拉逐步增加到3组。重量以做完仍能再完成约3–4次为宜。",
     sections:[
-      {type:"warmup", name:"热身", time:"4 分钟", items:[
-        ["原地踏步","逐渐加快，脚掌轻落地","45秒 + 休15秒"],
-        ["肩绕环 + 扩胸","肩膀向后绕，胸口自然打开","45秒 + 休15秒"],
-        ["徒手髋铰链","屁股向后，背部保持自然直线","45秒 + 休15秒"],
-        ["椅子坐站 / 浅蹲","膝盖方向与脚尖一致","45秒 + 休15秒"]
+      {type:"warmup",name:"热身｜约6分钟",time:"约6分钟",items:[
+        ["原地快走","身体直立、脚步轻，逐渐加快","2分钟"],
+        ["肩绕环","肩膀向后、向下缓慢绕环","60秒"],
+        ["髋关节绕环","骨盆小幅绕圈，上身尽量稳定","60秒"],
+        ["徒手髋铰链","膝微屈，臀部向后推，背部自然","60秒"],
+        ["徒手浅蹲","屁股向后坐，膝盖朝脚尖方向","60秒"]
       ]},
-      {type:"mainwork", name:"主训练｜2 轮", time:"16 分钟", items:[
-        ["椅子深蹲","坐向椅子，起身时脚掌踩稳","40秒 + 休20秒"],
-        ["臀桥","夹臀抬髋，不要用腰向上顶","40秒 + 休20秒"],
-        ["Bird Dog 鸟狗式","对侧手脚伸展，骨盆不要歪；建议左右各 6–8 次","40秒 + 休20秒"],
-        ["Dead Bug 死虫式","腰部保持稳定，腿不要伸得过低；建议左右各 5–8 次","40秒 + 休20秒"],
-        ["椅子深蹲","动作稳定、不要追求速度","40秒 + 休20秒"],
-        ["臀桥","顶端停约1秒","40秒 + 休20秒"],
-        ["Bird Dog 鸟狗式","左右交替；建议左右各 6–8 次","40秒 + 休20秒"],
-        ["Dead Bug 死虫式","左右交替；建议左右各 5–8 次","40秒 + 休20秒"]
+      {type:"mainwork",name:"主训练",time:"约20分钟",items:[
+        ["哑铃杯式深蹲","8–12次/组 × 2组。哑铃贴近胸前，脚掌踩稳；下蹲吸气，站起呼气","8–12次/组 × 2组 · 每组45秒 · 组间休60秒"],
+        ["哑铃罗马尼亚硬拉","8–12次/组 × 2组。哑铃贴近腿，臀部向后；大腿后侧有拉伸即可","8–12次/组 × 2组 · 每组45秒 · 组间休60秒"],
+        ["臀桥","12–15次/组 × 2组。夹臀抬髋，不用腰向上顶","12–15次/组 × 2组 · 每组45秒 · 组间休45秒"],
+        ["扶椅反向箭步蹲","左右各8–10次/组 × 2组。扶椅保持平衡，前腿承担主要重量","左右各8–10次/组 × 2组 · 每组60秒 · 组间休60秒"],
+        ["Pallof Press","左右各8–12次/组 × 2组。胸口和骨盆朝前，推出时呼气","左右各8–12次/组 × 2组 · 每组60秒 · 组间休45秒"],
+        ["Dead Bug 死虫式","左右各6–8次/组 × 2组。腰腹稳定，手脚伸展时呼气","左右各6–8次/组 × 2组 · 每组60秒 · 组间休45秒"]
       ]},
-      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
-        ["髋屈肌左","夹臀后再轻轻向前","45秒 + 换边15秒"],
-        ["髋屈肌右","腰不要前拱","45秒 + 换动作15秒"],
-        ["小腿左","脚跟踩地","45秒 + 换边15秒"],
-        ["小腿右","保持自然呼吸","45秒 + 放松15秒"]
+      {type:"stretch",name:"练后拉伸｜约4分钟",time:"约4分钟",items:[
+        ["髋屈肌左","夹臀后再轻轻向前，不要拱腰","40秒"],
+        ["髋屈肌右","保持骨盆稳定，拉到舒适牵拉感","40秒"],
+        ["臀肌拉伸","4字腿轻柔拉伸，腰部保持稳定","40秒"],
+        ["大腿后侧拉伸","膝可微弯，不要猛烈压腿","40秒"],
+        ["小腿拉伸","后脚跟踩地、脚尖朝前","40秒"]
       ]}
     ]
   },
-  "周二": {
-    title:"周二｜上肢 + 核心",
-    focus:"重点：胸、背、肩、手臂 + 抗旋转核心",
-    total:"约 24 分钟",
-    note:"墙壁俯卧撑如果太轻松，可以逐渐改成桌边俯卧撑。",
+  "周二":{
+    title:"妈妈｜周二有氧 + 活动度",
+    focus:"约28–32分钟｜中低强度有氧 + 脊柱活动",
+    total:"约 30 分钟",
+    note:"快走强度以可以说话、但不能轻松连续唱歌为宜。前2周不要求跳绳。",
     sections:[
-      {type:"warmup", name:"热身", time:"4 分钟", items:[
-        ["原地走","自然摆臂","45秒 + 休15秒"],
-        ["肩绕环","肩膀向后绕","45秒 + 休15秒"],
-        ["扩胸 / 胸椎轻旋转","小幅度，避免猛扭腰","45秒 + 休15秒"],
-        ["徒手髋铰链","练习髋部发力模式","45秒 + 休15秒"]
+      {type:"warmup",name:"有氧",time:"20分钟",items:[
+        ["原地快走 / 户外快走","保持稳定步频，脚步轻，手臂自然摆动","20分钟"]
       ]},
-      {type:"mainwork", name:"主训练｜2 轮", time:"16 分钟", items:[
-        ["墙壁俯卧撑","身体保持一条直线","40秒 + 休20秒"],
-        ["弹力带划船","肩胛骨向后靠拢，不要耸肩","40秒 + 休20秒"],
-        ["Pallof Press 左","身体不要被弹力带拉转","40秒 + 休20秒"],
-        ["Pallof Press 右","骨盆和胸口始终向前","40秒 + 休20秒"],
-        ["墙壁俯卧撑","慢慢靠近墙，再推开","40秒 + 休20秒"],
-        ["弹力带划船","不要用腰后仰借力","40秒 + 休20秒"],
-        ["臀桥","夹臀、腰不过伸","40秒 + 休20秒"],
-        ["Dead Bug","核心保持张力","40秒 + 休20秒"]
+      {type:"mainwork",name:"活动度 + 轻核心",time:"约8–10分钟",items:[
+        ["猫牛式","12次/组 × 2组。动作随呼吸缓慢完成","12次/组 × 2组 · 每组45秒 · 组间休30秒"],
+        ["胸椎旋转","左右各8次/组 × 2组。骨盆尽量稳定，从上胸部旋转","左右各8次/组 × 2组 · 每组50秒 · 组间休30秒"],
+        ["弹力带拉开","12次/组 × 2组。肩膀下沉，肩胛骨向后靠拢","12次/组 × 2组 · 每组45秒 · 组间休30秒"],
+        ["Bird Dog 鸟狗式","左右各6次/组 × 2组。骨盆保持水平","左右各6次/组 × 2组 · 每组50秒 · 组间休30秒"]
       ]},
-      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
-        ["胸肩左","门框辅助，轻微拉伸","45秒 + 换边15秒"],
-        ["胸肩右","不要耸肩","45秒 + 换动作15秒"],
-        ["髋屈肌左","骨盆保持稳定","45秒 + 换边15秒"],
-        ["髋屈肌右","自然呼吸","45秒 + 放松15秒"]
+      {type:"stretch",name:"结束拉伸",time:"约2分钟",items:[
+        ["髋屈肌左","轻柔拉伸，不拱腰","40秒"],
+        ["髋屈肌右","自然慢呼吸","40秒"]
       ]}
     ]
   },
-  "周三": {
-    title:"周三｜恢复 + 核心稳定",
-    focus:"重点：低强度恢复、臀部稳定、核心激活",
-    total:"约 23 分钟",
-    note:"今天不追求强度，主要目的是让身体恢复，同时保持活动。",
+  "周三":{
+    title:"妈妈｜周三上肢 + 核心",
+    focus:"约30–35分钟｜胸、背、肩 + 抗旋转核心",
+    total:"约 30–35 分钟",
+    note:"俯卧撑从墙壁开始，太轻松后再改桌边；哑铃先轻后重，优先保证肩颈放松。",
     sections:[
-      {type:"warmup", name:"轻快走", time:"5 分钟", items:[
-        ["原地快走","前4分钟轻快，最后1分钟逐渐放慢","5分钟"]
+      {type:"warmup",name:"热身｜约6分钟",time:"约6分钟",items:[
+        ["原地走","自然摆臂，逐渐加快","2分钟"],
+        ["肩绕环","向后绕环，肩颈放松","60秒"],
+        ["弹力带拉开","轻阻力，肩胛骨向后靠拢","45秒"],
+        ["墙壁俯卧撑","动作慢，身体保持一条直线","45秒"],
+        ["Bird Dog 鸟狗式","左右交替，骨盆稳定","60秒"]
       ]},
-      {type:"mainwork", name:"核心循环｜2 轮", time:"12 分钟", items:[
-        ["Bird Dog","动作慢，保持骨盆稳定；建议左右各 6–8 次","40秒 + 休20秒"],
-        ["Dead Bug","腰部保持稳定；建议左右各 5–8 次","40秒 + 休20秒"],
-        ["蚌式开合 左","脚跟贴住，骨盆不要向后翻；建议左侧 10–15 次","40秒 + 休20秒"],
-        ["蚌式开合 右","感受臀部外侧发力；建议右侧 10–15 次","40秒 + 休20秒"],
-        ["臀桥","臀部发力","40秒 + 休20秒"],
-        ["原地慢走","恢复呼吸","40秒 + 休20秒"]
+      {type:"mainwork",name:"主训练",time:"约20分钟",items:[
+        ["墙壁 / 桌边俯卧撑","8–12次/组 × 2组。靠近支撑面吸气，推开呼气","8–12次/组 × 2组 · 每组45秒 · 组间休60秒"],
+        ["单臂哑铃划船","左右各8–12次/组 × 2组。肘向髋部方向拉，避免耸肩","左右各8–12次/组 × 2组 · 每组60秒 · 组间休60秒"],
+        ["哑铃地板卧推","8–12次/组 × 2组。上臂触地后停，推起时呼气","8–12次/组 × 2组 · 每组45秒 · 组间休60秒"],
+        ["弹力带肩外旋","10–12次/组 × 2组。双肘贴近身体，使用轻阻力","10–12次/组 × 2组 · 每组45秒 · 组间休45秒"],
+        ["哑铃侧平举","10–12次/组 × 2组。轻重量，不耸肩，不甩动","10–12次/组 × 2组 · 每组45秒 · 组间休45秒"],
+        ["Pallof Press","左右各8–12次/组 × 2组。身体不要被弹力带拉转","左右各8–12次/组 × 2组 · 每组60秒 · 组间休45秒"],
+        ["Dead Bug 死虫式","左右各6–8次/组 × 2组。腰腹稳定，手脚伸展时呼气","左右各6–8次/组 × 2组 · 每组60秒 · 组间休45秒"]
       ]},
-      {type:"stretch", name:"泡沫轴 + 拉伸", time:"6 分钟", items:[
-        ["左臀 / 大腿","泡沫轴缓慢滚动","60秒"],
-        ["右臀 / 大腿","避开腰椎直接滚压","60秒"],
-        ["左小腿","缓慢滚动","45秒"],
-        ["右小腿","缓慢滚动","45秒"],
-        ["髋屈肌左","腰不要前拱","45秒"],
-        ["髋屈肌右","自然呼吸","45秒"],
-        ["慢呼吸","放松肩颈","60秒"]
+      {type:"stretch",name:"练后拉伸",time:"约4分钟",items:[
+        ["胸肩左","门框辅助，轻柔打开胸前","40秒"],
+        ["胸肩右","肩膀放松，不耸肩","40秒"],
+        ["髋屈肌左","骨盆稳定，不拱腰","40秒"],
+        ["髋屈肌右","自然慢呼吸","40秒"]
       ]}
     ]
   },
-  "周四": {
-    title:"周四｜全身力量",
-    focus:"重点：全身抗阻，防止肌肉流失",
-    total:"约 26 分钟",
-    note:"如果第三轮动作开始明显变形，可以只做两轮，把剩余时间改成慢走。",
+  "周四":{
+    title:"妈妈｜周四恢复日",
+    focus:"约25–30分钟｜快走 + 拉伸恢复",
+    total:"约 25–30 分钟",
+    note:"今天不追求强度。如果周一到周三酸痛明显，就把快走改为轻松走。",
     sections:[
-      {type:"warmup", name:"热身", time:"4 分钟", items:[
-        ["原地踏步","逐渐升温","45秒 + 休15秒"],
-        ["肩绕环 + 扩胸","肩颈放松","45秒 + 休15秒"],
-        ["髋铰链","屁股向后","45秒 + 休15秒"],
-        ["浅蹲","动作稳定","45秒 + 休15秒"]
+      {type:"warmup",name:"恢复有氧",time:"20分钟",items:[
+        ["原地快走 / 户外快走","维持轻到中等强度，保持能正常说话","20分钟"]
       ]},
-      {type:"mainwork", name:"全身循环｜3 轮", time:"18 分钟", items:[
-        ["椅子深蹲","臀腿发力","40秒 + 休20秒"],
-        ["墙壁 / 桌边俯卧撑","核心收紧","40秒 + 休20秒"],
-        ["弹力带划船","肩胛骨后收","40秒 + 休20秒"],
-        ["臀桥","不要顶腰","40秒 + 休20秒"],
-        ["Pallof Press","左20秒 + 右20秒","40秒 + 休20秒"],
-        ["Dead Bug","左右交替","40秒 + 休20秒"]
-      ]},
-      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
-        ["髋屈肌左","夹臀后轻推髋部","45秒 + 换边15秒"],
-        ["髋屈肌右","保持腰椎自然","45秒 + 换动作15秒"],
-        ["胸肩","轻柔拉伸","45秒 + 休15秒"],
-        ["小腿","脚跟踩地","45秒 + 放松15秒"]
+      {type:"stretch",name:"恢复拉伸",time:"约6分钟",items:[
+        ["胸肩左","肩膀下沉，轻柔打开胸前","40秒"],
+        ["胸肩右","拉伸到舒适牵拉感即可","40秒"],
+        ["髋屈肌左","夹臀后轻轻向前","40秒"],
+        ["髋屈肌右","避免腰向前拱","40秒"],
+        ["大腿后侧拉伸","膝可微弯，保持背部自然","40秒"],
+        ["小腿拉伸","脚跟踩地，脚尖朝前","40秒"]
       ]}
     ]
   },
-  "周五": {
-    title:"周五｜核心 + 臀部稳定",
-    focus:"重点：核心稳定、臀中肌、抗旋转",
-    total:"约 24 分钟",
-    note:"核心训练不是追求腰腹酸痛，而是让躯干在动作中保持稳定。",
+  "周五":{
+    title:"妈妈｜周五全身力量",
+    focus:"约35–40分钟｜全身力量 + 核心稳定",
+    total:"约 35–40 分钟",
+    note:"这是本周主要力量日。前三周宁可用轻重量完成标准动作，也不要追求力竭。",
     sections:[
-      {type:"warmup", name:"热身", time:"4 分钟", items:[
-        ["原地走","自然摆臂","45秒 + 休15秒"],
-        ["髋铰链","屁股向后","45秒 + 休15秒"],
-        ["浅蹲","膝盖朝向脚尖","45秒 + 休15秒"],
-        ["肩部活动","肩颈放松","45秒 + 休15秒"]
+      {type:"warmup",name:"热身｜约6分钟",time:"约6分钟",items:[
+        ["原地快走","身体直立、脚步轻","2分钟"],
+        ["肩绕环 + 髋部活动","肩颈放松，髋部小幅活动","60秒"],
+        ["徒手髋铰链","臀部向后，背部自然","60秒"],
+        ["徒手浅蹲","膝盖朝脚尖方向","60秒"],
+        ["墙壁俯卧撑","身体保持一条直线","60秒"]
       ]},
-      {type:"mainwork", name:"核心循环｜2 轮", time:"16 分钟", items:[
-        ["Dead Bug","肋骨不要翘起；建议左右各 5–8 次","40秒 + 休20秒"],
-        ["Bird Dog","骨盆不要歪；建议左右各 6–8 次","40秒 + 休20秒"],
-        ["蚌式开合 左","脚跟保持接触；建议左侧 10–15 次","40秒 + 休20秒"],
-        ["蚌式开合 右","不要让骨盆向后翻；建议右侧 10–15 次","40秒 + 休20秒"],
-        ["臀桥","夹臀抬髋","40秒 + 休20秒"],
-        ["Pallof Press 左","抗旋转；建议左侧 8–10 次","40秒 + 休20秒"],
-        ["Pallof Press 右","胸口朝前；建议右侧 8–10 次","40秒 + 休20秒"],
-        ["原地快走","轻快恢复","40秒 + 休20秒"]
+      {type:"mainwork",name:"主训练",time:"约25分钟",items:[
+        ["哑铃杯式深蹲","8–12次/组 × 3组。下蹲吸气，站起呼气","8–12次/组 × 3组 · 每组45秒 · 组间休60秒"],
+        ["哑铃罗马尼亚硬拉","8–12次/组 × 3组。臀部向后，哑铃贴腿","8–12次/组 × 3组 · 每组45秒 · 组间休60秒"],
+        ["墙壁 / 桌边俯卧撑","8–12次/组 × 3组。核心轻收，推起呼气","8–12次/组 × 3组 · 每组45秒 · 组间休60秒"],
+        ["单臂哑铃划船","左右各8–12次/组 × 3组。身体不旋转，拉起呼气","左右各8–12次/组 × 3组 · 每组60秒 · 组间休60秒"],
+        ["臀桥","12–15次/组 × 2组。顶端夹臀，不拱腰","12–15次/组 × 2组 · 每组45秒 · 组间休45秒"],
+        ["弹力带拉开","12–15次/组 × 2组。肩膀放松，控制回位","12–15次/组 × 2组 · 每组45秒 · 组间休45秒"],
+        ["Suitcase March 单手负重原地行进","左右各30秒/组 × 2组。单手持哑铃，身体不要向负重侧倾斜","左右各30秒/组 × 2组 · 每组60秒 · 组间休45秒"]
       ]},
-      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
-        ["髋屈肌","左右各约45秒","90秒"],
-        ["臀部","左右各约45秒","90秒"],
-        ["胸肩 / 小腿","轻柔拉伸","60秒"]
+      {type:"stretch",name:"练后拉伸",time:"约5分钟",items:[
+        ["胸肩左","轻柔拉伸","40秒"],
+        ["胸肩右","肩膀放松","40秒"],
+        ["髋屈肌左","不拱腰","40秒"],
+        ["髋屈肌右","自然呼吸","40秒"],
+        ["臀肌拉伸","4字腿轻柔拉伸","40秒"],
+        ["小腿拉伸","脚跟踩地","40秒"]
       ]}
     ]
   },
-  "周六": {
-    title:"周六｜全身循环",
-    focus:"重点：轻心肺 + 全身力量",
-    total:"约 25 分钟",
-    note:"依然保持低冲击，不需要跳绳。动作稳定比速度重要。",
+  "周六":{
+    title:"妈妈｜周六轻有氧",
+    focus:"约25–35分钟｜低冲击有氧；第3周后可选跳绳",
+    total:"约 25–35 分钟",
+    note:"前2周只完成快走即可。第3周以后，如果膝、踝、腰和盆底都没有不适，可增加跳绳间歇；不想跳可直接略过。",
     sections:[
-      {type:"warmup", name:"热身", time:"4 分钟", items:[
-        ["原地踏步","逐渐加快","45秒 + 休15秒"],
-        ["肩绕环","放松上身","45秒 + 休15秒"],
-        ["髋铰链","练习髋部发力","45秒 + 休15秒"],
-        ["浅蹲","轻柔进入状态","45秒 + 休15秒"]
+      {type:"warmup",name:"轻有氧",time:"25分钟",items:[
+        ["原地快走 / 户外快走","保持稳定步频和轻到中等强度","25分钟"]
       ]},
-      {type:"mainwork", name:"全身循环｜3 轮", time:"15 分钟", items:[
-        ["椅子深蹲","稳定控制","40秒 + 休20秒"],
-        ["弹力带划船","背部发力","40秒 + 休20秒"],
-        ["墙壁 / 桌边俯卧撑","胸肩手臂发力","40秒 + 休20秒"],
-        ["臀桥","臀部发力","40秒 + 休20秒"],
-        ["Pallof Press","左20秒 + 右20秒","40秒 + 休20秒"]
+      {type:"mainwork",name:"可选｜第3周后跳绳",time:"约9分钟",items:[
+        ["跳绳","30秒/组 × 6组。前脚掌轻落地，跳起高度小；组间原地走60秒","30秒/组 × 6组 · 每组30秒 · 组间休60秒"]
       ]},
-      {type:"mainwork", name:"轻心肺", time:"2 分钟", items:[
-        ["原地快走","稍快40秒 → 慢走20秒 → 重复一次","2分钟"]
-      ]},
-      {type:"stretch", name:"拉伸", time:"4 分钟", items:[
-        ["髋屈肌","左右各约45秒","90秒"],
-        ["臀部","左右各约45秒","90秒"],
-        ["小腿 / 胸肩","轻柔拉伸","60秒"]
+      {type:"stretch",name:"结束拉伸",time:"约3分钟",items:[
+        ["小腿拉伸","脚跟踩地，避免弹震","40秒"],
+        ["髋屈肌左","夹臀后轻轻向前","40秒"],
+        ["髋屈肌右","保持自然呼吸","40秒"]
       ]}
     ]
   },
-  "周日": {
-    title:"周日｜主动恢复",
-    focus:"重点：恢复、活动度、轻度核心激活",
-    total:"约 22–25 分钟",
-    note:"今天不追求力量刺激，让身体恢复，为下一周做准备。",
+  "周日":{
+    title:"妈妈｜周日休息 / 主动恢复",
+    focus:"15–20分钟可选｜轻松散步 + 放松",
+    total:"可选 15–20 分钟",
+    note:"今天可以完全休息。如果想活动，只做轻松走和舒适拉伸，不追求训练强度。",
     sections:[
-      {type:"warmup", name:"轻松走", time:"10 分钟", items:[
-        ["原地走 / 家中走动","2分钟轻松 → 6分钟稍快 → 2分钟放慢","10分钟"]
+      {type:"warmup",name:"可选轻活动",time:"15分钟",items:[
+        ["轻松散步 / 原地走","保持非常轻松的强度","15分钟"]
       ]},
-      {type:"mainwork", name:"活动度", time:"6 分钟", items:[
-        ["猫牛式","动作幅度小，不追求极限","40秒 + 休20秒"],
-        ["髋铰链","保持背部自然","40秒 + 休20秒"],
-        ["肩绕环","肩颈放松","40秒 + 休20秒"],
-        ["胸椎轻旋转","小幅度、不猛扭腰","40秒 + 休20秒"],
-        ["Bird Dog","慢速","40秒 + 休20秒"],
-        ["臀桥","轻松激活臀部","40秒 + 休20秒"]
-      ]},
-      {type:"stretch", name:"拉伸 / 泡沫轴", time:"6 分钟", items:[
-        ["髋屈肌","左右各45秒","90秒"],
-        ["臀部","左右各45秒","90秒"],
-        ["小腿","左右各45秒","90秒"],
-        ["胸肩 + 慢呼吸","保持放松","90秒"]
+      {type:"stretch",name:"放松",time:"约3分钟",items:[
+        ["胸肩拉伸","轻柔打开胸前","40秒"],
+        ["髋屈肌左","舒适范围即可","40秒"],
+        ["髋屈肌右","自然慢呼吸","40秒"]
       ]}
     ]
   }
 };
 
-
-
 const daughterPlan = {
   title:"女儿｜每日肩颈与脊柱训练",
   focus:"14岁｜每天内容相同｜低阻力、慢节奏、以无痛为前提",
-  total:"约 12–15 分钟",
-  note:"所有动作都以轻柔、无痛为标准。颈部练习使用最轻阻力弹力带，弹力带只放在后脑勺/枕骨后方，不绕过颈前或颈侧；下巴微收、头颈保持中立。如果出现头晕、头痛、手臂麻木、颈部锐痛或症状加重，应立即停止。",
+  total:"约 10–13 分钟",
+  note:"筋膜球仅轻柔放松肩胛骨周围，左右各1分钟；其余动作按次数完成。所有练习以轻柔、无痛为标准。颈部练习使用最轻阻力弹力带，弹力带只放在后脑勺/枕骨后方，不绕过颈前或颈侧；出现头晕、头痛、手臂麻木或颈部锐痛时立即停止。",
   sections:[
-    {type:"stretch", name:"1｜筋膜球放松", time:"约 3.5 分钟", items:[
-      ["肩胛骨周围 左","靠墙使用筋膜球，轻压肩胛骨周围肌肉，避开骨头；慢慢呼吸","45秒 + 换边15秒"],
-      ["肩胛骨周围 右","同上，找到轻微酸胀点后停留，不要强压","45秒 + 换动作15秒"],
-      ["胸小肌区域 左","在锁骨下方靠外侧的胸前肌肉轻压，避开骨点和敏感组织","30秒 + 换边15秒"],
-      ["胸小肌区域 右","压力保持轻到中等，不追求疼痛感","30秒 + 换动作15秒"]
+    {type:"stretch", name:"1｜筋膜球放松", time:"2 分钟", items:[
+      ["肩胛骨周围 左","靠墙使用筋膜球，轻压肩胛骨周围肌肉，避开骨头和脊柱；找到轻微酸胀点即可，慢慢呼吸","60秒"],
+      ["肩胛骨周围 右","靠墙使用筋膜球，轻压肩胛骨周围肌肉，避开骨头和脊柱；不要追求疼痛感","60秒"]
     ]},
-    {type:"mainwork", name:"2｜脊柱灵活", time:"约 2.5 分钟", items:[
-      ["猫牛式","12次/组 × 2组。约4秒一次：吸气轻轻伸展，呼气缓慢拱背；幅度舒适即可","每组48秒 + 组间休30秒"]
+    {type:"mainwork", name:"2｜脊柱灵活", time:"约 2–3 分钟", items:[
+      ["猫牛式","12次/组 × 2组。动作缓慢，吸气轻轻伸展，呼气缓慢拱背；幅度舒适即可","12次/组 × 2组 · 组间休30秒"]
     ]},
-    {type:"mainwork", name:"3｜肩关节外旋", time:"约 2 分钟", items:[
-      ["弹力带双侧肩外旋","10次/组 × 2组。肘部贴近身体，使用轻阻力；约2秒向外、2秒回位","每组40秒 + 组间休30秒"]
+    {type:"mainwork", name:"3｜肩关节外旋", time:"约 2–3 分钟", items:[
+      ["弹力带双侧肩外旋","12次/组 × 2组。肘部贴近身体，使用最轻或轻阻力弹力带；向外打开时控制动作，不耸肩","12次/组 × 2组 · 组间休30秒"]
     ]},
-    {type:"mainwork", name:"4｜弹力带颈后抗阻", time:"约 4 分钟", items:[
-      ["弹力带颈后抗阻","12次/组 × 3组。弹力带放在后脑勺/枕骨后方，双手在前方握住两端；下巴微收、颈部保持中立。呼气时轻轻增加张力并停留2–3秒，吸气时缓慢回位","每组约60秒 + 组间休30秒"]
+    {type:"mainwork", name:"4｜弹力带颈后抗阻", time:"约 3–4 分钟", items:[
+      ["弹力带颈后抗阻","12次/组 × 3组。弹力带放在后脑勺/枕骨后方，双手在前方握住两端；下巴微收、颈部保持中立。呼气时轻轻增加张力并停留2–3秒，吸气时缓慢回位","12次/组 × 3组 · 组间休30秒"]
     ]}
   ]
 };
 
 const dadPlans = {
   "周一":{
-    title:"爸爸｜周一 全身力量 + 核心",
-    focus:"10–12分钟｜站立为主｜全身力量 + 抗旋转核心",
-    total:"约 12 分钟",
-    note:"所有动作使用轻到中等阻力。发力时呼气、回位时吸气，不憋气，不做到力竭。页面中的动作示范/视频链接需要联网打开。",
+    title:"爸爸｜周一全身 A",
+    focus:"约12–14分钟｜全身力量 + 核心",
+    total:"约 12–14 分钟",
+    note:"轻到中等阻力。发力时呼气，回位时吸气，不憋气、不做到力竭。",
     sections:[
-      {type:"warmup",name:"热身",time:"2 分钟",items:[
+      {type:"warmup",name:"热身｜2分钟",time:"2分钟",items:[
         ["原地走","自然摆臂，逐渐加快","60秒"],
-        ["肩绕环 + 髋部活动","肩膀向后绕，髋部轻松活动","60秒"]
+        ["肩绕环 + 徒手坐站","肩颈放松，坐站幅度舒适","60秒"]
       ]},
-      {type:"mainwork",name:"主训练｜2 轮",time:"10 分钟",items:[
-        ["椅子深蹲","约10–12次。蹲下吸气，起身呼气；屁股向后坐","40秒 + 休20秒"],
-        ["墙壁俯卧撑","约10–15次。靠近墙吸气，推开时呼气","40秒 + 休20秒"],
-        ["弹力带划船","约10–15次。拉回时呼气，回位吸气；不要后仰借力","40秒 + 休20秒"],
-        ["Pallof Press","左20秒 + 右20秒。双手向前推出时呼气，身体不要旋转","40秒 + 休20秒"],
-        ["站姿交替抬膝","核心轻收，正常呼吸，不用力卷腹","40秒 + 休20秒"]
+      {type:"mainwork",name:"主训练｜2组",time:"约10分钟",items:[
+        ["椅子深蹲","10–12次/组 × 2组。屁股向后坐，起身呼气","10–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["墙壁 / 桌边俯卧撑","8–12次/组 × 2组。身体保持一条直线，推开呼气","8–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["弹力带划船","10–12次/组 × 2组。肩胛骨向后靠拢，不后仰借力","10–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press","左右各8次/组 × 2组。胸口和骨盆始终朝前","左右各8次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["原地快速踏步","40秒/组 × 2组。脚步轻、核心轻收，保持正常呼吸","40秒/组 × 2组 · 每组40秒 · 组间休20秒"]
+      ]},
+      {type:"stretch",name:"快速拉伸｜2分钟",time:"2分钟",items:[
+        ["胸肩拉伸","肩膀放松，轻柔打开胸前","30秒"],
+        ["髋屈肌左","不拱腰","30秒"],
+        ["髋屈肌右","自然呼吸","30秒"],
+        ["小腿拉伸","脚跟踩地","30秒"]
       ]}
     ]
   },
   "周二":{
-    title:"爸爸｜周二 核心 + 轻有氧",
-    focus:"约 12 分钟｜站姿核心 + 低冲击心肺",
+    title:"爸爸｜周二核心 + 轻有氧",
+    focus:"约11–13分钟｜站姿核心 + 低冲击心肺",
     total:"约 12 分钟",
-    note:"今天重点是核心稳定和活动量，不追求腹部酸痛。保持正常呼吸。",
+    note:"不需要追求腹部酸痛。核心训练以抗旋转、保持稳定为主。",
     sections:[
-      {type:"warmup",name:"热身",time:"1 分钟",items:[
-        ["原地走","轻松走动，逐渐加快","60秒"]
+      {type:"warmup",name:"热身",time:"1分钟",items:[
+        ["原地走","逐渐加快，脚步轻","60秒"]
       ]},
-      {type:"mainwork",name:"核心循环｜2 轮",time:"11 分钟",items:[
-        ["原地快速踏步","脚步轻，保持能说短句的强度","40秒 + 休20秒"],
-        ["Pallof Press 左","约8–10次。推出时呼气，骨盆和胸口朝前","40秒 + 休20秒"],
-        ["Pallof Press 右","约8–10次。推出时呼气，不被弹力带拉转","40秒 + 休20秒"],
-        ["站姿对侧提膝","左右交替，动作慢，正常呼吸","40秒 + 休20秒"],
-        ["侧向迈步","膝盖微屈，臀部发力，不跳","40秒 + 休20秒"],
-        ["墙壁平板","双手或前臂撑墙，腹部轻收，不憋气","30秒 + 休30秒"]
+      {type:"mainwork",name:"核心循环｜2组",time:"约11分钟",items:[
+        ["原地快速踏步","40秒/组 × 2组。维持能说短句的强度","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press 左","8–10次/组 × 2组。推出时呼气，身体不要旋转","8–10次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press 右","8–10次/组 × 2组。骨盆和胸口朝前","8–10次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["站姿对侧提膝","40秒/组 × 2组。左右交替，不用力卷腹","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["侧向迈步","40秒/组 × 2组。膝微屈，小步侧移","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["墙壁平板","30秒/组 × 2组。腹部轻收，但必须保持呼吸","30秒/组 × 2组 · 每组30秒 · 组间休30秒"]
       ]}
     ]
   },
   "周三":{
-    title:"爸爸｜周三 臀腿 + 核心",
-    focus:"10–12分钟｜臀腿力量 + 站姿核心",
-    total:"约 11 分钟",
-    note:"髋铰链先不用重哑铃，重点是臀部向后、背部自然直。发力时呼气。",
+    title:"爸爸｜周三臀腿 + 核心",
+    focus:"约11–13分钟｜臀腿力量 + 站姿核心",
+    total:"约 12 分钟",
+    note:"髋铰链先不用重哑铃。重点是臀部向后、背部保持自然，发力时呼气。",
     sections:[
-      {type:"warmup",name:"热身",time:"1 分钟",items:[
+      {type:"warmup",name:"热身",time:"1分钟",items:[
         ["原地走 + 髋部活动","轻松活动髋、膝、踝","60秒"]
       ]},
-      {type:"mainwork",name:"主训练｜2 轮",time:"10 分钟",items:[
-        ["椅子深蹲","10–12次。起身呼气","40秒 + 休20秒"],
-        ["站姿髋铰链","10–12次。臀部向后，站直时呼气","40秒 + 休20秒"],
-        ["站姿后抬腿","左20秒 + 右20秒。躯干保持直立","40秒 + 休20秒"],
-        ["提踵","12–15次。慢慢抬起、慢慢放下","40秒 + 休20秒"],
-        ["Pallof Press","左20秒 + 右20秒。推出时呼气","40秒 + 休20秒"]
+      {type:"mainwork",name:"主训练｜2组",time:"约10分钟",items:[
+        ["椅子深蹲","10–12次/组 × 2组。脚掌踩稳，起身呼气","10–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["站姿髋铰链","10–12次/组 × 2组。臀部向后，站直呼气","10–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["站姿后抬腿","左右各8–10次/组 × 2组。躯干保持直立","左右各8–10次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["提踵","12–15次/组 × 2组。慢慢抬起、慢慢下降","12–15次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press","左右各8次/组 × 2组。推出时呼气，不旋转","左右各8次/组 × 2组 · 每组40秒 · 组间休20秒"]
+      ]},
+      {type:"stretch",name:"放松",time:"1分钟",items:[
+        ["小腿 + 髋屈肌拉伸","左右交替，拉到舒适牵拉感即可","60秒"]
       ]}
     ]
   },
   "周四":{
-    title:"爸爸｜周四 恢复 + 活动度",
-    focus:"约 10 分钟｜恢复、活动度、轻核心",
-    total:"约 10 分钟",
-    note:"恢复日不追求累。动作幅度舒适即可，全程保持轻松呼吸。",
+    title:"爸爸｜周四恢复 + 活动度",
+    focus:"约10–12分钟｜恢复、活动度、轻核心",
+    total:"约 11 分钟",
+    note:"恢复日不追求累。所有动作幅度保持舒适，全程轻松呼吸。",
     sections:[
-      {type:"warmup",name:"轻松走",time:"3 分钟",items:[
+      {type:"warmup",name:"轻松走",time:"3分钟",items:[
         ["原地轻松走","自然摆臂，保持轻松","3分钟"]
       ]},
-      {type:"mainwork",name:"活动度循环｜2 轮",time:"7 分钟",items:[
-        ["肩绕环","肩颈放松","40秒 + 休20秒"],
-        ["胸椎轻旋转","手放胸前，小幅度转动，不猛扭腰","40秒 + 休20秒"],
-        ["站姿髋铰链","动作慢，臀部向后","40秒 + 休20秒"],
-        ["站姿交替抬膝","核心轻收，正常呼吸","40秒 + 休20秒"]
+      {type:"mainwork",name:"活动度循环｜2组",time:"约8分钟",items:[
+        ["肩绕环","40秒/组 × 2组。肩颈放松","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["胸椎轻旋转","40秒/组 × 2组。小幅度转动，不猛扭腰","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["站姿髋铰链","40秒/组 × 2组。臀部向后，动作慢","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["站姿交替抬膝","40秒/组 × 2组。核心轻收，正常呼吸","40秒/组 × 2组 · 每组40秒 · 组间休20秒"]
       ]}
     ]
   },
   "周五":{
-    title:"爸爸｜周五 上肢 + 核心",
-    focus:"约 12 分钟｜胸背肩 + 核心稳定",
-    total:"约 12 分钟",
-    note:"今天以站姿推拉为主。弹力带阻力以动作标准、呼吸顺畅为准。",
+    title:"爸爸｜周五上肢 + 核心",
+    focus:"约12–14分钟｜胸、背、肩 + 核心",
+    total:"约 13 分钟",
+    note:"使用轻到中等阻力。动作标准优先，不憋气，不追求最后几次勉强完成。",
     sections:[
-      {type:"warmup",name:"热身",time:"2 分钟",items:[
-        ["原地走","逐渐加快","60秒"],
-        ["肩绕环 + 扩胸","肩颈放松","60秒"]
+      {type:"warmup",name:"热身｜2分钟",time:"2分钟",items:[
+        ["原地走","自然摆臂","60秒"],
+        ["肩绕环 + 扩胸","肩膀放松，胸口轻轻打开","60秒"]
       ]},
-      {type:"mainwork",name:"主训练｜2 轮",time:"10 分钟",items:[
-        ["墙壁 / 桌边俯卧撑","10–15次。推开时呼气","40秒 + 休20秒"],
-        ["弹力带划船","10–15次。拉回时呼气，不后仰","40秒 + 休20秒"],
-        ["弹力带拉开","10–15次。手臂略低于肩，拉开时呼气","40秒 + 休20秒"],
-        ["Pallof Press 左","8–10次。推出时呼气","40秒 + 休20秒"],
-        ["Pallof Press 右","8–10次。推出时呼气","40秒 + 休20秒"]
+      {type:"mainwork",name:"主训练｜2组",time:"约10分钟",items:[
+        ["墙壁 / 桌边俯卧撑","10–12次/组 × 2组。推开时呼气","10–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["弹力带划船","10–12次/组 × 2组。拉回时呼气，不后仰","10–12次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["弹力带拉开","10–15次/组 × 2组。肩胛骨后收，不耸肩","10–15次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press 左","8–10次/组 × 2组。身体保持正向","8–10次/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press 右","8–10次/组 × 2组。推出时呼气","8–10次/组 × 2组 · 每组40秒 · 组间休20秒"]
+      ]},
+      {type:"stretch",name:"放松",time:"1分钟",items:[
+        ["胸肩拉伸","肩膀放松，不拉到疼痛","60秒"]
       ]}
     ]
   },
   "周六":{
-    title:"爸爸｜周六 全身循环",
-    focus:"约 12–14分钟｜全身力量 + 轻心肺",
-    total:"约 13 分钟",
-    note:"这是本周稍快的一天，但仍不跳、不憋气。感觉腹压明显升高时减慢速度或降低阻力。",
+    title:"爸爸｜周六全身循环",
+    focus:"约13–15分钟｜全身循环 + 轻心肺",
+    total:"约 14 分钟",
+    note:"维持稳定节奏即可，不需要追求快。出现明显气喘时可直接暂停或延长休息。",
     sections:[
-      {type:"warmup",name:"热身",time:"1 分钟",items:[
-        ["原地走","逐渐提高步频","60秒"]
+      {type:"warmup",name:"热身",time:"1分钟",items:[
+        ["原地走","逐渐加快，脚步轻","60秒"]
       ]},
-      {type:"mainwork",name:"全身循环｜2 轮",time:"12 分钟",items:[
-        ["椅子深蹲","起身呼气","40秒 + 休20秒"],
-        ["弹力带划船","拉回呼气","40秒 + 休20秒"],
-        ["原地快走","步频稍快，不跳","40秒 + 休20秒"],
-        ["墙壁俯卧撑","推开呼气","40秒 + 休20秒"],
-        ["侧向迈步","臀部发力，保持站立","40秒 + 休20秒"],
-        ["Pallof Press","左20秒 + 右20秒，推出时呼气","40秒 + 休20秒"]
+      {type:"mainwork",name:"全身循环｜2组",time:"约12分钟",items:[
+        ["椅子深蹲","40秒/组 × 2组。屁股向后，起身呼气","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["弹力带划船","40秒/组 × 2组。肩膀下沉，不后仰","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["原地快速踏步","40秒/组 × 2组。保持正常呼吸","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["墙壁俯卧撑","40秒/组 × 2组。身体保持直线","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["侧向迈步","40秒/组 × 2组。膝微屈，臀部发力","40秒/组 × 2组 · 每组40秒 · 组间休20秒"],
+        ["Pallof Press","40秒/组 × 2组。左右交替，身体不旋转","40秒/组 × 2组 · 每组40秒 · 组间休20秒"]
+      ]},
+      {type:"stretch",name:"放松",time:"1分钟",items:[
+        ["胸肩 + 小腿拉伸","左右交替，保持舒适牵拉","60秒"]
       ]}
     ]
   },
   "周日":{
-    title:"爸爸｜周日 轻有氧 + 恢复",
-    focus:"10–15分钟｜轻有氧 + 放松",
-    total:"约 12–15 分钟",
-    note:"今天以活动和恢复为主。如果方便，户外快走可以替代原地走。",
+    title:"爸爸｜周日轻活动",
+    focus:"约11–13分钟｜轻有氧 + 恢复",
+    total:"约 12 分钟",
+    note:"今天以恢复和保持活动量为主。如果很疲劳，可以只散步，不做拉伸以外的训练。",
     sections:[
-      {type:"warmup",name:"轻有氧",time:"8–10 分钟",items:[
-        ["原地快走 / 户外快走","保持轻到中等强度，不需要跑跳","8分钟"]
+      {type:"warmup",name:"轻有氧",time:"8分钟",items:[
+        ["原地走 / 户外快走","保持轻松到中等强度","8分钟"]
       ]},
-      {type:"stretch",name:"站姿拉伸",time:"4–5 分钟",items:[
-        ["胸肩拉伸","门框辅助，轻柔拉伸","45秒 + 换边15秒"],
-        ["髋屈肌左","骨盆保持稳定","45秒 + 换边15秒"],
-        ["髋屈肌右","不要拱腰","45秒 + 换动作15秒"],
-        ["小腿拉伸","脚跟踩地，左右交替","60秒"]
+      {type:"stretch",name:"站姿拉伸｜约4分钟",time:"约4分钟",items:[
+        ["胸肩左","肩膀放松","30秒"],
+        ["胸肩右","轻柔拉伸","30秒"],
+        ["髋屈肌左","不拱腰","30秒"],
+        ["髋屈肌右","自然呼吸","30秒"],
+        ["小腿左","脚跟踩地","30秒"],
+        ["小腿右","脚尖朝前","30秒"]
       ]}
     ]
   }
 };
 
-const order = ["周一","周二","周三","周四","周五","周六","周日"];
 const memberNames = {mom:"妈妈", dad:"爸爸", daughter:"女儿"};
 
+const members={mom:"妈妈",dad:"爸爸",daughter:"女儿"};
+const days=["周一","周二","周三","周四","周五","周六","周日"];
+let member=localStorage.getItem("fitness_member")||"mom";
+let day=localStorage.getItem("fitness_day")||days[(new Date().getDay()+6)%7];
+if(!members[member]) member="mom"; if(!days.includes(day)) day="周一";
+let flat=[]; let currentIndex=0; let started=false; let paused=false; let tick=null;
+let sessionElapsed=0; let itemDurations=[]; let completed=new Set(); let reminderMinute=[];
+let wakeLock=null; let activeDetailIndex=null;
+let transitioning=false; let transitionToken=0;
+let countdownRemaining=0; let tenSecondCue=false;
+let currentSet=1; let inRest=false; let restRemaining=0; let restTotal=30; let restTick=null;
 
-const momDemoLinks = {
-  "原地踏步": {label:"视频搜索：原地踏步", url:"https://www.youtube.com/results?search_query=marching+in+place+exercise"},
-  "原地走": {label:"视频搜索：原地走", url:"https://www.youtube.com/results?search_query=marching+in+place+exercise"},
-  "原地快走": {label:"视频搜索：原地快走", url:"https://www.youtube.com/results?search_query=power+walk+in+place+exercise"},
-  "肩绕环 + 扩胸": {label:"视频搜索：肩绕环与扩胸", url:"https://www.youtube.com/results?search_query=shoulder+circles+chest+opener+exercise"},
-  "肩绕环": {label:"视频搜索：肩绕环", url:"https://www.youtube.com/results?search_query=shoulder+circles+exercise"},
-  "扩胸 / 胸椎轻旋转": {label:"视频搜索：胸椎轻旋转", url:"https://www.youtube.com/results?search_query=thoracic+rotation+exercise"},
-  "胸椎轻旋转": {label:"视频搜索：胸椎旋转", url:"https://www.youtube.com/results?search_query=thoracic+rotation+exercise"},
-  "徒手髋铰链": {label:"视频搜索：髋铰链", url:"https://www.youtube.com/results?search_query=hip+hinge+exercise"},
-  "髋铰链": {label:"视频搜索：髋铰链", url:"https://www.youtube.com/results?search_query=hip+hinge+exercise"},
-  "椅子坐站 / 浅蹲": {label:"视频搜索：椅子坐站", url:"https://www.youtube.com/results?search_query=sit+to+stand+exercise"},
-  "浅蹲": {label:"视频搜索：浅蹲", url:"https://www.youtube.com/results?search_query=bodyweight+half+squat+exercise"},
-  "椅子深蹲": {label:"视频搜索：椅子深蹲", url:"https://www.youtube.com/results?search_query=chair+squat+exercise"},
-  "臀桥": {label:"视频搜索：臀桥", url:"https://www.youtube.com/results?search_query=glute+bridge+exercise"},
-  "Bird Dog 鸟狗式": {label:"视频搜索：Bird Dog 鸟狗式", url:"https://www.youtube.com/results?search_query=bird+dog+exercise"},
-  "Bird Dog": {label:"视频搜索：Bird Dog 鸟狗式", url:"https://www.youtube.com/results?search_query=bird+dog+exercise"},
-  "Dead Bug 死虫式": {label:"视频搜索：Dead Bug 死虫式", url:"https://www.youtube.com/results?search_query=dead+bug+exercise"},
-  "Dead Bug": {label:"视频搜索：Dead Bug 死虫式", url:"https://www.youtube.com/results?search_query=dead+bug+exercise"},
-  "墙壁俯卧撑": {label:"视频搜索：墙壁俯卧撑", url:"https://www.youtube.com/results?search_query=wall+push+up+exercise"},
-  "墙壁 / 桌边俯卧撑": {label:"视频搜索：墙壁/桌边俯卧撑", url:"https://www.youtube.com/results?search_query=incline+push+up+exercise"},
-  "弹力带划船": {label:"视频搜索：弹力带划船", url:"https://www.youtube.com/results?search_query=resistance+band+row+exercise"},
-  "Pallof Press 左": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
-  "Pallof Press 右": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
-  "Pallof Press": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
-  "蚌式开合 左": {label:"视频搜索：蚌式开合", url:"https://www.youtube.com/results?search_query=clamshell+exercise"},
-  "蚌式开合 右": {label:"视频搜索：蚌式开合", url:"https://www.youtube.com/results?search_query=clamshell+exercise"},
-  "猫牛式": {label:"视频搜索：猫牛式", url:"https://www.youtube.com/results?search_query=cat+cow+exercise"},
-  "胸肩左": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
-  "胸肩右": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
-  "胸肩": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
-  "髋屈肌左": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
-  "髋屈肌右": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
-  "髋屈肌": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
-  "小腿左": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
-  "小腿右": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
-  "小腿": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
-  "左臀 / 大腿": {label:"视频搜索：泡沫轴臀腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+glutes+thigh+exercise"},
-  "右臀 / 大腿": {label:"视频搜索：泡沫轴臀腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+glutes+thigh+exercise"},
-  "左小腿": {label:"视频搜索：泡沫轴小腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+calf+exercise"},
-  "右小腿": {label:"视频搜索：泡沫轴小腿放松", url:"https://www.youtube.com/results?search_query=foam+roller+calf+exercise"},
-  "肩部活动": {label:"视频搜索：肩部活动", url:"https://www.youtube.com/results?search_query=shoulder+mobility+exercise"},
-  "站姿交替抬膝": {label:"视频搜索：站姿交替抬膝", url:"https://www.youtube.com/results?search_query=standing+knee+raise+exercise"}
-};
-
-const dadDemoLinks = {
-  "椅子深蹲": {label:"视频搜索：椅子深蹲", url:"https://www.youtube.com/results?search_query=%E6%A4%85%E5%AD%90%E6%B7%B1%E8%B9%B2+sit+to+stand+exercise"},
-  "墙壁俯卧撑": {label:"视频搜索：墙壁俯卧撑", url:"https://www.youtube.com/results?search_query=wall+push+up+exercise"},
-  "墙壁 / 桌边俯卧撑": {label:"视频搜索：墙壁/桌边俯卧撑", url:"https://www.youtube.com/results?search_query=incline+push+up+exercise"},
-  "弹力带划船": {label:"视频搜索：弹力带划船", url:"https://www.youtube.com/results?search_query=resistance+band+row+exercise"},
-  "Pallof Press": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
-  "Pallof Press 左": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
-  "Pallof Press 右": {label:"视频搜索：Pallof Press", url:"https://www.youtube.com/results?search_query=pallof+press+exercise"},
-  "站姿交替抬膝": {label:"视频搜索：站姿交替抬膝", url:"https://www.youtube.com/results?search_query=standing+knee+raise+exercise"},
-  "原地快速踏步": {label:"视频搜索：原地快速踏步", url:"https://www.youtube.com/results?search_query=marching+in+place+exercise"},
-  "站姿对侧提膝": {label:"视频搜索：站姿对侧提膝", url:"https://www.youtube.com/results?search_query=standing+cross+knee+raise+exercise"},
-  "侧向迈步": {label:"视频搜索：侧向迈步", url:"https://www.youtube.com/results?search_query=lateral+step+exercise"},
-  "墙壁平板": {label:"视频搜索：墙壁平板", url:"https://www.youtube.com/results?search_query=wall+plank+exercise"},
-  "站姿髋铰链": {label:"视频搜索：站姿髋铰链", url:"https://www.youtube.com/results?search_query=hip+hinge+exercise"},
-  "站姿后抬腿": {label:"视频搜索：站姿后抬腿", url:"https://www.youtube.com/results?search_query=standing+leg+extension+glute+exercise"},
-  "提踵": {label:"视频搜索：提踵", url:"https://www.youtube.com/results?search_query=standing+calf+raise+exercise"},
-  "弹力带拉开": {label:"视频搜索：弹力带拉开", url:"https://www.youtube.com/results?search_query=band+pull+apart+exercise"},
-  "原地快走": {label:"视频搜索：原地快走", url:"https://www.youtube.com/results?search_query=power+walk+in+place+exercise"},
-  "胸肩拉伸": {label:"视频搜索：胸肩拉伸", url:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+exercise"},
-  "髋屈肌左": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
-  "髋屈肌右": {label:"视频搜索：髋屈肌拉伸", url:"https://www.youtube.com/results?search_query=hip+flexor+stretch+exercise"},
-  "小腿拉伸": {label:"视频搜索：小腿拉伸", url:"https://www.youtube.com/results?search_query=calf+stretch+exercise"},
-  "肩绕环": {label:"视频搜索：肩绕环", url:"https://www.youtube.com/results?search_query=shoulder+circles+exercise"},
-  "胸椎轻旋转": {label:"视频搜索：胸椎旋转", url:"https://www.youtube.com/results?search_query=thoracic+rotation+exercise"}
-};
+function getPlan(){return member==="mom"?momPlans[day]:member==="dad"?dadPlans[day]:daughterPlan;}
+function fmt(sec){sec=Math.max(0,Math.floor(sec||0));return String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");}
+function esc(s){return String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+function q(s){return encodeURIComponent(s.replace(/左|右/g,"").replace(/\/|｜/g," "));}
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1800);}
 
 
-let currentMember = "mom";
-let currentDay = "周一";
-let voiceEnabled = true;
-let timerSteps = [];
-let currentStep = 0;
-let remaining = 0;
-let stepDuration = 0;
-let timerId = null;
-let isPaused = false;
-let sharedAudioCtx = null;
-let lastVoiceCueSecond = -1;
+function sectionSetCount(section=""){
+  const m=String(section).match(/(\d+)\s*(?:轮|组)/);
+  return m?Number(m[1]):1;
+}
+function rangeSpeak(s){
+  return String(s).replace(/[–—~～-]/g,"到");
+}
+function exercisePrescription(x){
+  const desc=String(x.desc||"");
+  const plan=String(x.plan||"");
+  const text=`${desc} ${plan}`;
+  let sets=sectionSetCount(x.section);
 
-function getPlan(day){
-  if(currentMember === "mom") return momPlans[day];
-  if(currentMember === "daughter") return daughterPlan;
-  if(currentMember === "dad") return dadPlans[day];
-  return null;
+  const explicitSets=text.match(/[×xX]\s*(\d+)\s*组/);
+  if(explicitSets) sets=Number(explicitSets[1]);
+
+  let m=text.match(/左右各\s*(?:约\s*)?(\d+\s*[–—~～-]\s*\d+|\d+)\s*次/);
+  if(m) return `左右各${rangeSpeak(m[1]).replace(/\s+/g,"")}次，做${sets}组`;
+
+  m=text.match(/(?:约\s*)?(\d+\s*[–—~～-]\s*\d+|\d+)\s*次\s*\/\s*组/);
+  if(m) return `每组${rangeSpeak(m[1]).replace(/\s+/g,"")}次，做${sets}组`;
+
+  m=text.match(/(?:约\s*)?(\d+\s*[–—~～-]\s*\d+|\d+)\s*次/);
+  if(m) return `每组${rangeSpeak(m[1]).replace(/\s+/g,"")}次，做${sets}组`;
+
+  m=text.match(/左\s*(\d+)\s*秒\s*\+\s*右\s*(\d+)\s*秒/);
+  if(m && m[1]===m[2]) return `左右各${m[1]}秒，做${sets}组`;
+  if(m) return `左侧${m[1]}秒，右侧${m[2]}秒，做${sets}组`;
+
+  m=plan.match(/每组\s*(?:约\s*)?(\d+)\s*秒/);
+  if(m) return `每组${m[1]}秒，做${sets}组`;
+
+  m=plan.match(/(?:约\s*)?(\d+)\s*分钟/);
+  if(m) return sets>1?`每组${m[1]}分钟，做${sets}组`:`持续${m[1]}分钟`;
+
+  m=plan.match(/(?:约\s*)?(\d+)\s*秒/);
+  if(m) return `每组${m[1]}秒，做${sets}组`;
+
+  return sets>1?`按页面计划，做${sets}组`:"按页面计划完成";
 }
 
-function unlockAudio(){
-  try{
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if(!AudioCtx) return;
-    if(!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
-    if(sharedAudioCtx.state === "suspended") sharedAudioCtx.resume();
-    const osc = sharedAudioCtx.createOscillator();
-    const gain = sharedAudioCtx.createGain();
-    gain.gain.value = 0.0001;
-    osc.connect(gain); gain.connect(sharedAudioCtx.destination);
-    osc.start(); osc.stop(sharedAudioCtx.currentTime + 0.02);
-  }catch(e){}
+function memberUsesCountdown(){
+  return member==="mom" || member==="dad";
+}
+function countdownSeconds(x){
+  const text=`${x?.plan||""} ${x?.desc||""}`;
+  let m=text.match(/每组\s*(\d+)\s*秒/);
+  if(m)return Number(m[1]);
+  m=text.match(/(\d+)\s*分钟/);
+  if(m)return Number(m[1])*60;
+  m=text.match(/(\d+)\s*秒/);
+  if(m)return Number(m[1]);
+  return 45;
+}
+function resetCountdownForCurrent(){
+  countdownRemaining=memberUsesCountdown()&&flat[currentIndex]?countdownSeconds(flat[currentIndex]):0;
+  tenSecondCue=false;
 }
 
-function chooseChineseVoice(){
-  try{
-    const voices = speechSynthesis.getVoices();
-    return voices.find(v => /^zh/i.test(v.lang) && /Ting|Mei|Yu|Chinese|中文|普通话/i.test(v.name))
-      || voices.find(v => /^zh/i.test(v.lang))
-      || null;
-  }catch(e){ return null; }
+function explicitSetCount(x){
+  const text=`${x?.desc||""} ${x?.plan||""}`;
+  const m=text.match(/[×xX]\s*(\d+)\s*组/);
+  return m?Number(m[1]):1;
+}
+function groupRestSeconds(x){
+  const text=`${x?.desc||""} ${x?.plan||""}`;
+  const m=text.match(/组间休\s*(\d+)\s*秒/);
+  return m?Number(m[1]):30;
+}
+function hasMoreSets(){
+  return !!flat[currentIndex] && currentSet < explicitSetCount(flat[currentIndex]);
+}
+function currentSetText(){
+  const total=flat[currentIndex]?explicitSetCount(flat[currentIndex]):1;
+  return total>1?`第${currentSet}/${total}组`:"";
 }
 
-function speak(text, interrupt=true){
-  if(!voiceEnabled || !text || !("speechSynthesis" in window)) return;
-  try{
-    if(interrupt) speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "zh-CN";
-    u.rate = 1.08;
-    u.pitch = 1.0;
-    const v = chooseChineseVoice();
-    if(v) u.voice = v;
-    speechSynthesis.speak(u);
-  }catch(e){}
+function nextAnnouncement(x,isFirst=false,isPrevious=false){
+  const lead=isFirst?"第一个动作":isPrevious?"返回上一项":"下一个动作";
+  return `${lead}，${x.title}。${exercisePrescription(x)}。`;
 }
 
-function renderFamilyTabs(){
-  document.querySelectorAll(".family-btn").forEach(btn=>{
-    btn.classList.toggle("active", btn.dataset.member === currentMember);
-  });
-  document.getElementById("voiceBtn").textContent = `语音提醒：${voiceEnabled ? "开" : "关"}`;
+function guideFor(title,desc=""){
+  const t=title.toLowerCase();
+  const G=(points,errors,breathing,beginner,query)=>({points,errors,breathing,beginner,query:query||title,voice:`${title}。${points}。呼吸：${breathing}`});
+  if(/肩绕环.*髋部|髋部.*肩绕环/.test(title)) return G("先做缓慢肩绕环，再做小幅髋部活动；躯干保持直立，动作都以舒适范围为准。","耸肩、快速甩动肩膀，或用腰部大幅代偿髋部活动。","全程自然呼吸，不需要憋气。","只做肩胛骨后缩和扶椅小幅髋部前后移动。","shoulder circles hip mobility warm up");
+  if(/小腿.*胸肩|胸肩.*小腿/.test(title)) return G("分别完成小腿和胸肩的轻柔拉伸；拉到有牵拉感即可，不追求疼痛。","弹震拉伸、耸肩、后脚脚尖外翻，或为了拉得更深而猛烈转体。","保持缓慢自然呼吸，呼气时稍微放松。","每个部位缩短到20到30秒，并扶墙保持稳定。","calf chest shoulder stretch beginner");
+  if(/胸肩.*慢呼吸|慢呼吸.*胸肩/.test(title)) return G("先轻柔打开胸肩，再让肩颈放松做慢呼吸；避免挺腰来增加幅度。","耸肩、过度挺胸拱腰、刻意深吸到头晕。","吸气约3到4秒，呼气约4到6秒，以舒适为准。","坐在椅子上做轻微扩胸并自然慢呼吸。","chest shoulder stretch diaphragmatic breathing");
+  if(/原地走.*髋部|髋部.*原地走/.test(title)) return G("先轻松原地走，再加入小幅髋部活动；脚步轻、身体直立。","跺脚、身体大幅摇晃、髋部绕圈过大导致腰部代偿。","保持连续自然呼吸。","扶椅慢走，并只做髋部前后小幅移动。","marching in place hip mobility warm up");
+  if(/原地快走.*户外快走/.test(title)) return G("保持直立和稳定步频，达到轻到中等强度即可；脚步轻，手臂自然摆动。","一开始走太快、步幅过大、耸肩或憋气。","保持自然呼吸，以还能说短句为宜。","缩短步幅并降低速度，必要时分段完成。","brisk walking beginner proper form");
+  if(/罗马尼亚硬拉|RDL/i.test(title)) return G("膝盖轻微弯曲，臀部向后推，哑铃沿大腿前侧向下并贴近身体；大腿后侧有拉伸即可。","为了让哑铃更低而弓腰、膝盖弯太多变成深蹲、顶端用腰后仰。","下降吸气，臀部发力站直时呼气。","先做徒手髋铰链，熟练后再拿轻哑铃。","romanian deadlift dumbbell beginner proper form");
+  if(/反向箭步蹲/.test(title)) return G("一手扶椅，单腿向后迈，前脚踩稳，身体主要上下移动；前腿承担主要重量。","后撤步太小、前膝内夹、身体明显前冲、后脚蹬地过多。","下降吸气，前腿发力起身时呼气。","分腿站立原地小幅屈膝，不需要迈步。","supported reverse lunge beginner proper form");
+  if(/地板卧推/.test(title)) return G("仰卧屈膝，哑铃位于胸口两侧；上臂轻触地面后停，再稳定推起。","腰过度拱起、肘完全横向打开、肩膀耸起、哑铃互相碰撞。","下降吸气，推起时呼气。","使用更轻哑铃，或改做墙壁俯卧撑。","dumbbell floor press beginner proper form");
+  if(/侧平举/.test(title)) return G("双臂向身体两侧抬起，肘微弯，抬到肩高以下即可；重量要轻。","哑铃过重、耸肩、甩动身体、抬得过高。","抬起呼气，控制下降时吸气。","使用更轻哑铃或水瓶，并减小抬起幅度。","dumbbell lateral raise beginner proper form");
+  if(/Suitcase March|单手负重原地行进/i.test(title)) return G("单手持哑铃，身体站直，慢慢交替抬脚；即使一侧负重，躯干也不要向该侧倾斜。","重量太大、身体左右晃、耸肩、憋气。","全程保持自然呼吸。","先不抬腿，只单手持轻哑铃站立20到30秒。","suitcase march exercise core beginner");
+  if(/跳绳/.test(title)) return G("用前脚掌轻柔落地，膝盖微屈，跳起高度很小，主要用手腕转绳。","跳太高、整条手臂甩绳、落地很重、疲劳后继续硬跳。","保持连续自然呼吸。","改为无绳小跳或原地快走。","jump rope beginner low impact form");
+  if(/髋关节绕环/.test(title)) return G("双手扶髋，小幅度绕圈，骨盆活动而上身尽量稳定。","幅度过大导致腰部扭动、动作太快。","保持自然呼吸。","扶椅做髋部前后和左右的小幅移动。","hip circles mobility warm up");
+  if(/臀肌拉伸/.test(title)) return G("仰卧或坐姿做4字腿，轻轻把腿靠近身体，感受臀部拉伸。","强拉膝盖、腰部扭曲、拉到疼痛。","保持缓慢自然呼吸。","坐椅子做4字腿并减小幅度。","figure four glute stretch beginner");
+  if(/大腿后侧拉伸/.test(title)) return G("膝盖可以微弯，保持背部自然，从髋部轻轻前倾到大腿后侧有牵拉感。","猛烈压腿、为了伸直膝盖而弓腰。","慢呼吸，呼气时稍微放松。","脚跟放在低台阶上，小幅髋铰链。","hamstring stretch beginner proper form");
+  if(/深蹲|坐站|浅蹲/.test(title)) return G("双脚约肩宽，屁股先向后再屈膝，膝盖朝脚尖方向，脚掌踩稳。","膝盖内夹、脚跟抬起、弓腰或起身时向前冲。","下蹲吸气，站起时呼气。","扶椅完成坐下—站起，减少下蹲深度。","chair squat exercise proper form");
+  if(/髋铰链/.test(title)) return G("膝微屈，臀部向后推，上身从髋部前倾，背部保持自然直线。","把动作做成深蹲、弯腰低头、腰部过度拱起。","臀部向后时吸气，站直时呼气。","站在墙前，用臀部向后碰墙练习。","hip hinge exercise proper form");
+  if(/臀桥/.test(title)) return G("仰卧屈膝，收紧臀部抬髋，到肩髋膝大致一线即可。","为了抬高而拱腰、膝盖乱晃。","抬髋呼气，落下吸气。","降低抬起高度。","glute bridge exercise proper form");
+  if(/bird dog|鸟狗/i.test(title)) return G("四点跪姿，对侧手脚缓慢伸出，骨盆保持水平。","腿抬太高、塌腰、身体旋转或动作太快。","伸出时呼气，回位吸气。","先只抬一条腿或一只手。","bird dog exercise proper form");
+  if(/dead bug|死虫/i.test(title)) return G("仰卧保持腰腹稳定，对侧手脚缓慢伸展，幅度以腰不拱起为准。","腿伸太低、腰离开垫子、憋气。","伸展时呼气，回位吸气。","只移动一条腿，脚跟轻点地。","dead bug exercise proper form");
+  if(/pallof/i.test(title)) return G("弹力带固定在身体侧面，双手从胸前推出，胸口和骨盆始终朝前。","身体跟着旋转、耸肩、阻力过大或腰后仰。","推出时缓慢呼气，收回吸气。","靠近固定点，使用更轻阻力。","Pallof press exercise proper form");
+  if(/俯卧撑/.test(title)) return G("双手撑墙或桌边，头到脚保持一条直线，胸口缓慢靠近支撑面再推开。","塌腰、撅臀、耸肩、手肘完全横向打开。","靠近时吸气，推开时呼气。","站得更靠近墙，减小身体倾斜。","wall push up incline push up proper form");
+  if(/划船/.test(title)) return G("肩膀下沉，手肘向后拉，肩胛骨向后靠拢，躯干保持稳定。","后仰借力、耸肩、快速弹回。","拉回时呼气，伸直时吸气。","使用更轻弹力带或缩短阻力距离。","resistance band row exercise proper form");
+  if(/拉开/.test(title)) return G("双手胸前握弹力带，手臂接近伸直，向两侧拉开并后收肩胛。","耸肩、腰后仰、阻力过大。","拉开呼气，回位吸气。","使用更轻弹力带或缩小幅度。","band pull apart exercise proper form");
+  if(/肩外旋/.test(title)) return G("双肘贴近身体约90度，前臂向外打开，肩膀放松。","肘离开身体、身体旋转、手腕折弯。","向外打开呼气，回位吸气。","不用弹力带先练动作。","band shoulder external rotation exercise");
+  if(/侧向迈步/.test(title)) return G("膝微屈，双脚朝前，向侧面稳定迈步，保持骨盆水平。","拖脚、膝内扣、身体左右摇摆。","自然呼吸。","不加弹力带，小步侧移。","lateral band walk exercise beginner");
+  if(/提踵/.test(title)) return G("扶稳支撑物，脚跟慢慢抬起，顶端稍停后控制下降。","快速弹跳、脚踝外翻、身体晃动。","抬起呼气，下降吸气。","双手扶墙增加稳定。","standing calf raise exercise");
+  if(/后抬腿/.test(title)) return G("扶椅站立，腿向后伸，臀部发力，躯干保持直立。","为了抬高腿而拱腰、身体前倾。","抬腿呼气，回位吸气。","减小后抬幅度。","standing hip extension exercise");
+  if(/平板/.test(title)) return G("双手或前臂撑墙，身体保持斜直线，腹部轻收但仍能正常呼吸。","塌腰、撅臀、憋气。","全程自然呼吸。","站得更靠近墙。","wall plank exercise");
+  if(/抬膝|踏步|原地走|快走/.test(title)) return G("身体直立，脚步轻，核心轻收，手臂自然摆动。","身体大幅摇晃、跺脚、耸肩或憋气。","保持连续自然呼吸。","放慢速度并扶椅。","marching in place standing knee raise exercise");
+  if(/猫牛/.test(title)) return G("四点跪姿，整条脊柱随呼吸缓慢伸展和拱起，幅度舒适。","甩头、动作过快、只用腰部做大幅度运动。","吸气轻伸展，呼气缓慢拱背。","双手撑桌做站姿猫牛式。","cat cow stretch exercise");
+  if(/胸椎.*旋转|轻旋转/.test(title)) return G("骨盆尽量稳定，从上胸部缓慢旋转，动作控制。","把动作变成腰部猛扭、借惯性。","转动时呼气，回正吸气。","坐椅子双臂抱胸小幅旋转。","thoracic rotation exercise");
+  if(/蚌式/.test(title)) return G("侧卧屈膝，脚跟保持接触，上侧膝盖打开，骨盆不要后翻。","为了抬高膝盖而整个身体向后倒。","打开时呼气，回位吸气。","不加弹力带并减小幅度。","clamshell exercise proper form");
+  if(/肩胛骨周围/.test(title)) return G("筋膜球靠墙轻压肩胛骨周围肌肉，避开骨头和脊柱，找到轻微酸胀点即可。","直接压骨点、压力过大、快速滚动。","慢而自然地呼吸。","不用球，改为肩胛骨轻柔活动。","massage ball scapula release exercise");
+  if(/胸小肌/.test(title)) return G("球放在锁骨下方靠外侧的胸前肌肉，轻压即可，避开骨点和敏感区域。","压力过大、压在锁骨或肩关节前方骨点。","缓慢自然呼吸。","门框轻柔胸肌拉伸。","pectoralis minor massage ball release");
+  if(/颈后抗阻/.test(title)) return G("用最轻阻力弹力带放在后脑勺枕骨后方，下巴微收，头颈保持中立，轻轻增加张力。","弹力带绕过颈前、头后仰、阻力过大或出现疼痛仍继续。","吸气准备，呼气增加张力并停留2到3秒，再吸气回位。","不用弹力带，用手掌轻柔提供极小阻力。","band cervical isometric extension exercise");
+  if(/髋屈肌/.test(title)) return G("先收臀让骨盆稍后卷，再轻轻向前移动，感受大腿根前方拉伸。","为了拉得更深而拱腰。","保持慢呼吸，呼气时放松。","站姿弓步扶墙拉伸。","hip flexor stretch proper form");
+  if(/小腿/.test(title)) return G("一脚向后，后脚脚跟踩地、脚尖朝前，身体轻轻向墙靠。","后脚脚尖外翻、弹震拉伸。","保持自然慢呼吸。","扶墙缩短站距。","calf stretch wall proper form");
+  if(/胸肩|扩胸/.test(title)) return G("肩膀放松向下，胸口轻轻打开，拉伸到舒适牵拉感即可。","耸肩、猛烈转体、拉到疼痛。","自然慢呼吸。","减小幅度。","chest shoulder stretch doorway");
+  if(/肩绕环|肩部活动/.test(title)) return G("肩膀以舒适幅度缓慢向后绕圈，颈部放松。","耸肩、动作太快、用头部带动。","自然呼吸。","做肩胛骨后缩。","shoulder circles mobility exercise");
+  if(/臀|大腿/.test(title)) return G("使用泡沫轴或拉伸时保持压力适中，缓慢移动，避开关节和骨点。","追求疼痛、快速滚压。","慢呼吸，呼气时放松。","减少压力或改为轻柔拉伸。","foam roller glutes thighs exercise");
+  if(/慢呼吸/.test(title)) return G("肩颈放松，鼻吸口呼或自然鼻呼吸，节奏缓慢。","用力吸气、耸肩、憋气。","吸气约3到4秒，呼气约4到6秒。","保持自己最舒服的慢呼吸。","diaphragmatic breathing exercise");
+  return G(desc||"动作缓慢、稳定，以无痛和姿势标准为优先。","动作过快、借惯性、憋气或为了次数牺牲姿势。","保持自然呼吸，发力阶段通常呼气。","减小幅度、降低阻力或扶稳支撑物。",title+" exercise proper form");
 }
 
-function selectMember(member){
-  stopTimer();
-  currentMember = member;
-  try { localStorage.setItem("fitness_selected_member", member); } catch(e){}
-  if(member === "daughter") voiceEnabled = true;
-  renderFamilyTabs();
-  render(currentDay);
+function flattenPlan(){
+  const p=getPlan(), arr=[]; let n=0;
+  p.sections.forEach((s,si)=>s.items.forEach((it,ii)=>arr.push({id:`${si}-${ii}`,section:s.name,sectionTime:s.time,title:it[0],desc:it[1],plan:it[2],num:++n})));
+  return arr;
 }
-
-function parseDuration(text){
-  if(!text) return 40;
-  let m = text.match(/(\d+)\s*分钟/);
-  if(m) return parseInt(m[1],10)*60;
-  m = text.match(/(\d+)\s*秒/);
-  if(m) return parseInt(m[1],10);
-  return 40;
+function renderTabs(){
+  document.querySelectorAll('.member-btn').forEach(b=>b.classList.toggle('active',b.dataset.member===member));
+  const el=document.getElementById('dayTabs');el.innerHTML=days.map(d=>`<button class="day-btn ${d===day?'active':''}" data-day="${d}">${d}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(started&&!confirm('切换星期会结束当前训练，继续吗？'))return;endWithoutRecord();day=b.dataset.day;localStorage.setItem('fitness_day',day);render();}));
 }
-
-function parseRest(text){
-  if(!text) return 0;
-  let m = text.match(/休\s*(\d+)\s*秒/);
-  if(m) return parseInt(m[1],10);
-  m = text.match(/换边\s*(\d+)\s*秒/);
-  if(m) return parseInt(m[1],10);
-  m = text.match(/换动作\s*(\d+)\s*秒/);
-  if(m) return parseInt(m[1],10);
-  return 0;
+function render(){
+  renderTabs();flat=flattenPlan();itemDurations=Array(flat.length).fill(0);reminderMinute=Array(flat.length).fill(0);completed=new Set();currentIndex=0;currentSet=1;inRest=false;restRemaining=0;sessionElapsed=0;started=false;paused=false;clearInterval(restTick);restTick=null;
+  const p=getPlan();document.getElementById('sessionTitle').textContent=member==='daughter'?`${day}｜${p.title}`:p.title;document.getElementById('sessionFocus').textContent=p.focus;document.getElementById('sessionNote').textContent=p.note;
+  let html='',last='';flat.forEach((x,i)=>{if(x.section!==last){if(last)html+='</section>';html+=`<section class="section"><div class="section-head"><h2>${esc(x.section)}</h2><span>${esc(x.sectionTime)}</span></div>`;last=x.section;}html+=exerciseCard(x,i);});if(last)html+='</section>';
+  document.getElementById('planList').innerHTML=html;bindExerciseActions();updateUI();renderHistory();setControls();
 }
+function exerciseCard(x,i){
+  const g=guideFor(x.title,x.desc);
+  return `<article class="exercise" id="ex-${i}" data-index="${i}">
+    <div class="exercise-grid">
+      <div class="step-num">${i+1}</div>
+      <div>
+        <div class="ex-title">${esc(x.title)}</div>
+        <div class="ex-desc">${esc(x.desc)}</div>
+        <span class="ex-plan">${esc(x.plan)}</span>
+        <div class="ex-time" id="time-${i}">实际用时 00:00</div>
+        <div class="set-status" id="set-${i}"></div>
 
-function daughterTimerSteps(){
-  const s = [];
-  const add = (o)=>s.push(o);
-
-  add({type:"exercise",section:"筋膜球放松",name:"肩胛骨周围 左",detail:"靠墙轻压，慢慢呼吸，避开骨头",duration:45,
-       voiceStart:"开始左侧肩胛骨周围放松。轻轻压住，慢慢呼吸，不要压在骨头上。",
-       cues:{15:"保持轻压力，呼吸放松。",30:"还有十五秒。"}});
-  add({type:"rest",section:"筋膜球放松",name:"换到右侧",detail:"调整筋膜球位置",duration:15,voiceStart:"休息十五秒，准备右侧。"});
-  add({type:"exercise",section:"筋膜球放松",name:"肩胛骨周围 右",detail:"找到轻微酸胀点即可，不追求疼痛",duration:45,
-       voiceStart:"开始右侧肩胛骨周围放松。压力轻一点，肩膀保持放松。",
-       cues:{15:"保持呼吸。",30:"还有十五秒。"}});
-  add({type:"rest",section:"筋膜球放松",name:"准备胸小肌",detail:"把球移到锁骨下方靠外侧的胸前肌肉",duration:15,voiceStart:"准备胸小肌放松。"});
-  add({type:"exercise",section:"筋膜球放松",name:"胸小肌区域 左",detail:"轻压锁骨下方靠外侧，避开骨点和敏感组织",duration:30,
-       voiceStart:"左侧胸小肌区域，轻轻压住。不要追求疼痛。",cues:{15:"还有十五秒，保持自然呼吸。"}});
-  add({type:"rest",section:"筋膜球放松",name:"换到右侧",detail:"轻轻调整位置",duration:15,voiceStart:"换到右侧。"});
-  add({type:"exercise",section:"筋膜球放松",name:"胸小肌区域 右",detail:"轻压、慢呼吸",duration:30,
-       voiceStart:"右侧胸小肌区域，保持轻压力。",cues:{15:"还有十五秒。"}});
-  add({type:"rest",section:"转换",name:"准备猫牛式",detail:"到瑜伽垫四点跪姿",duration:20,voiceStart:"放松结束。二十秒准备猫牛式。"});
-
-  for(let set=1; set<=2; set++){
-    add({type:"exercise",section:"脊柱灵活",round:`第 ${set}/2 组`,name:"猫牛式｜12次",detail:"每次约4秒：吸气轻伸展，呼气缓慢拱背",duration:48,
-         voiceStart:`猫牛式第${set}组，十二次。保持四秒一次，吸气轻轻伸展，呼气缓慢拱背。`,
-         cues:{12:"保持慢节奏。",24:"完成一半。",36:"最后三次。"}});
-    if(set<2) add({type:"rest",section:"脊柱灵活",name:"组间休息",detail:"放松肩颈，保持四点跪姿或坐起",duration:30,voiceStart:"休息三十秒。"});
-  }
-
-  add({type:"rest",section:"转换",name:"准备肩关节外旋",detail:"拿轻阻力弹力带，肘部贴近身体",duration:20,voiceStart:"准备肩关节外旋。使用轻阻力弹力带。"});
-
-  for(let set=1; set<=2; set++){
-    add({type:"exercise",section:"肩关节外旋",round:`第 ${set}/2 组`,name:"双侧肩外旋｜10次",detail:"肘贴身体，2秒向外、2秒回位",duration:40,
-         voiceStart:`肩外旋第${set}组，十次。两秒向外，两秒慢慢回来。肘部贴近身体。`,
-         cues:{20:"完成一半，肩膀不要耸起。",32:"最后两次。"}});
-    if(set<2) add({type:"rest",section:"肩关节外旋",name:"组间休息",detail:"放松手臂",duration:30,voiceStart:"休息三十秒。"});
-  }
-
-  add({type:"rest",section:"转换",name:"准备弹力带颈后抗阻",detail:"选择最轻阻力弹力带，放在后脑勺/枕骨后方，双手在前方握住两端；下巴微收，颈部保持中立",duration:25,
-       voiceStart:"准备弹力带颈后抗阻。使用最轻阻力。弹力带放在后脑勺后方，不要绕到颈前。下巴微收，颈部保持正直。"});
-
-  for(let set=1; set<=3; set++){
-    add({type:"exercise",section:"弹力带颈后抗阻",round:`第 ${set}/3 组`,name:"弹力带颈后抗阻｜12次",detail:"每次：吸气准备；呼气时轻轻拉紧弹力带并保持头颈稳定，停留2–3秒；吸气缓慢回位。共12次",duration:60,
-         voiceStart:`弹力带颈后抗阻第${set}组，十二次。吸气准备，呼气时轻轻增加张力，保持两到三秒，再吸气慢慢回位。头不要后仰。`,
-         cues:{15:"保持轻阻力，头颈正直。",30:"完成一半。继续配合呼吸。",45:"最后三次。每次停留两到三秒。",55:"最后一次，慢慢回位。"}});
-    if(set<3) add({type:"rest",section:"弹力带颈后抗阻",name:"组间休息",detail:"放松弹力带和颈肩，保持自然呼吸",duration:30,voiceStart:"这一组完成。休息三十秒，放松颈肩。"});
-  }
-  return s;
-}
-
-function buildTimerSteps(day){
-  if(currentMember === "daughter") return daughterTimerSteps();
-  const p = getPlan(day);
-  if(!p) return [];
-  const steps = [];
-  p.sections.forEach(section=>{
-    const roundsMatch = section.name.match(/(\d+)\s*轮/);
-    const rounds = roundsMatch ? parseInt(roundsMatch[1],10) : 1;
-    for(let r=1;r<=rounds;r++){
-      section.items.forEach(it=>{
-        const dur = parseDuration(it[2]);
-        const dadCue = currentMember === "dad" && section.type === "mainwork"
-          ? {20:"保持正常呼吸。发力时呼气，不要憋气。"}
-          : null;
-        steps.push({
-          type:"exercise",
-          name:it[0],
-          detail:it[1],
-          duration:dur,
-          section:section.name,
-          round:rounds>1 ? `第 ${r}/${rounds} 轮` : "",
-          voiceStart:`开始${it[0]}。${it[1]}`,
-          cues:dadCue
-        });
-        const rest = parseRest(it[2]);
-        if(rest>0){
-          steps.push({
-            type:"rest",
-            name:"休息 / 换动作",
-            detail:"准备下一项，放松呼吸",
-            duration:rest,
-            section:section.name,
-            round:rounds>1 ? `第 ${r}/${rounds} 轮` : "",
-            voiceStart:`休息${rest}秒。放松呼吸。`
-          });
-        }
-      });
-    }
-  });
-  return steps;
-}
-
-
-function getDemoLink(itemTitle){
-  if(currentMember === "mom" && momDemoLinks[itemTitle]) return momDemoLinks[itemTitle];
-  if(currentMember === "dad" && dadDemoLinks[itemTitle]) return dadDemoLinks[itemTitle];
-  return null;
-}
-
-function fmt(sec){
-  sec = Math.max(0, Math.round(sec));
-  const m = Math.floor(sec/60);
-  const s = sec%60;
-  return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-}
-
-function renderTabs(active){
-  const el = document.getElementById("dayTabs");
-  el.innerHTML = order.map(d => `<button class="day-btn ${d===active?'active':''}" data-day="${d}">${d}</button>`).join("");
-  el.querySelectorAll(".day-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>render(btn.dataset.day));
-  });
-}
-
-function render(day){
-  stopTimer();
-  currentDay = day;
-  renderFamilyTabs();
-  renderTabs(day);
-
-  const p = getPlan(day);
-  const wrap = document.getElementById("plan");
-
-  if(!p){
-    document.getElementById("dayTitle").textContent = `${memberNames[currentMember]}｜计划暂未设置`;
-    document.getElementById("dayFocus").textContent = "已保留家庭成员入口";
-    document.getElementById("totalTime").textContent = "暂无训练";
-    document.getElementById("dayNote").textContent = "当前家庭成员暂未设置训练计划。";
-    wrap.innerHTML = `<section class="placeholder"><h3>计划暂未设置</h3><p>当前家庭成员还没有训练计划。</p></section>`;
-    resetTimerPanel();
-    renderHistory();
-    return;
-  }
-
-  document.getElementById("dayTitle").textContent =
-    currentMember === "daughter" ? `${day}｜${p.title}` : p.title;
-  document.getElementById("dayFocus").textContent = p.focus;
-  document.getElementById("totalTime").textContent = p.total;
-  document.getElementById("dayNote").textContent = p.note;
-
-  wrap.innerHTML = p.sections.map(section => `
-    <section class="section ${section.type}">
-      <div class="section-head">
-        <span>${section.name}</span>
-        <span class="time">${section.time}</span>
-      </div>
-      ${section.items.map((it,i)=>`
-        <div class="item">
-          <div class="num">${i+1}</div>
-          <div>
-            <div class="item-title">${it[0]}</div>
-            <div class="item-desc">${it[1]}</div>
-            ${it[0].includes("蚌式开合") ? `<a class="exercise-link" href="https://health.clevelandclinic.org/glute-exercises" target="_blank" rel="noopener">查看蚌式开合动作参考 ↗</a>` : ""}
-            ${getDemoLink(it[0]) ? `<a class="exercise-link" href="${getDemoLink(it[0]).url}" target="_blank" rel="noopener">${getDemoLink(it[0]).label} ↗</a>` : ""}
+        <details class="inline-guide" data-guide="${i}">
+          <summary>动作说明</summary>
+          <div class="inline-guide-body">
+            <div class="inline-guide-item">
+              <strong>✓ 动作要点</strong>
+              <p>${esc(g.points)}</p>
+            </div>
+            <div class="inline-guide-item error">
+              <strong>! 常见错误</strong>
+              <p>${esc(g.errors)}</p>
+            </div>
+            <div class="inline-guide-item breathe">
+              <strong>◌ 呼吸节奏</strong>
+              <p>${esc(g.breathing)}</p>
+            </div>
+            <div class="inline-guide-item beginner">
+              <strong>↘ 初学者替代</strong>
+              <p>${esc(g.beginner)}</p>
+            </div>
           </div>
-          <div class="duration">${it[2]}</div>
-        </div>
-      `).join("")}
-    </section>
-  `).join("");
+        </details>
 
-  try {
-    localStorage.setItem("fitness_selected_day", day);
-    localStorage.setItem("fitness_selected_member", currentMember);
-  } catch(e) {}
-  resetTimerPanel();
-  renderHistory();
-  window.scrollTo({top:0,behavior:"smooth"});
+        <a href="#detail-${i}" class="detail-link" data-detail="${i}">查看完整解说 · 图片 / 视频 →</a>
+      </div>
+      <div class="ex-actions">
+        <button class="icon-btn" data-speak="${i}" aria-label="朗读${esc(x.title)}动作要领">🔊</button>
+      </div>
+    </div>
+  </article>`;
 }
+function bindExerciseActions(){
+  document.querySelectorAll('[data-speak]').forEach(b=>b.addEventListener('click',()=>speakGuide(Number(b.dataset.speak))));
+  document.querySelectorAll('[data-detail]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openDetail(Number(a.dataset.detail));}));
+  document.querySelectorAll('.exercise').forEach(el=>el.addEventListener('click',e=>{if(e.target.closest('button,a,details,summary'))return;if(!started)return;const idx=Number(el.dataset.index);moveTo(idx);}));
+}
+function updateUI(){
+  document.getElementById('sessionElapsed').textContent=fmt(sessionElapsed);
+  const timerLabel=document.getElementById('currentTimerLabel');
+  if(inRest){
+    document.getElementById('currentElapsed').textContent=fmt(restRemaining);
+    if(timerLabel)timerLabel.textContent='休息剩余';
+  }else if(memberUsesCountdown()){
+    document.getElementById('currentElapsed').textContent=fmt(Math.max(0,countdownRemaining));
+    if(timerLabel)timerLabel.textContent='当前剩余';
+  }else{
+    document.getElementById('currentElapsed').textContent=fmt(itemDurations[currentIndex]||0);
+    if(timerLabel)timerLabel.textContent='当前动作';
+  }
+  document.getElementById('progressCount').textContent=`${completed.size}/${flat.length}`;
+  const pct=flat.length?Math.round(completed.size/flat.length*100):0;
+  document.getElementById('progressPct').textContent=pct+'%';
+  document.getElementById('progressBar').style.width=pct+'%';
+  flat.forEach((x,i)=>{
+    const el=document.getElementById('ex-'+i);if(!el)return;
+    el.classList.toggle('current',started&&!inRest&&i===currentIndex);
+    el.classList.toggle('done',completed.has(i));
+    const n=el.querySelector('.step-num');n.textContent=completed.has(i)?'✓':String(i+1);
+    document.getElementById('time-'+i).textContent='实际训练 '+fmt(itemDurations[i]);
+  });
+}
+function setControls(){
+  const start=document.getElementById('startBtn'),pause=document.getElementById('pauseBtn');
+  const prev=document.getElementById('prevBtn'),next=document.getElementById('nextBtn'),complete=document.getElementById('completeBtn');
+  const skip=document.getElementById('skipRestBtn'),dock=document.querySelector('.dock-inner');
 
-function resetTimerPanel(){
-  timerSteps = buildTimerSteps(currentDay);
-  currentStep = 0;
-  remaining = 0;
-  stepDuration = 0;
-  lastVoiceCueSecond = -1;
-  document.getElementById("timerPhase").textContent = "未开始";
-  document.getElementById("timerExercise").textContent =
-    timerSteps.length ? "点击“开始今日训练”进入自动倒计时" : "当前家庭成员尚无训练计划";
-  document.getElementById("timerCount").textContent = "00:00";
-  document.getElementById("timerSub").textContent =
-    timerSteps.length ? `共 ${timerSteps.length} 个计时步骤，会自动切换。` : "请选择已有训练计划的家庭成员。";
-  document.getElementById("progressBar").style.width = "0%";
-  document.getElementById("startBtn").disabled = !timerSteps.length;
-  document.getElementById("completeBtn").disabled = !timerSteps.length;
-  document.getElementById("pauseBtn").disabled = true;
-  document.getElementById("prevBtn").disabled = true;
-  document.getElementById("nextBtn").disabled = true;
-  document.getElementById("pauseBtn").textContent = "暂停";
+  start.querySelector('span:last-child').textContent=started?(paused?'继续锻炼':inRest?'休息中':transitioning?'准备中':'训练中'):'开始锻炼';
+  start.disabled=started&&!paused;
+  pause.disabled=!started||paused||inRest;
+
+  prev.disabled=!started||transitioning||inRest||currentIndex<=0;
+  next.disabled=!started||transitioning||inRest;
+  next.querySelector('span:last-child').textContent=hasMoreSets()?'完成本组':'后一项';
+
+  complete.disabled=!started||transitioning||inRest;
+
+  skip.hidden=!inRest;
+  skip.disabled=!inRest;
+  dock.classList.toggle('resting',inRest);
 }
 
 function startWorkout(){
-  unlockAudio();
-  timerSteps = buildTimerSteps(currentDay);
-  if(!timerSteps.length) return;
-  currentStep = 0;
-  loadStep(true);
-  document.getElementById("startBtn").disabled = true;
-  document.getElementById("pauseBtn").disabled = false;
-  document.getElementById("prevBtn").disabled = false;
-  document.getElementById("nextBtn").disabled = false;
-  startTicking();
-}
-
-function loadStep(withVoice=true){
-  const st = timerSteps[currentStep];
-  if(!st){
-    finishWorkout();
+  if(started&&paused){
+    paused=false;
+    requestWakeLock();
+    transitioning=false;
+    speak('继续训练。',()=>{
+      if(!started||paused)return;
+      startTick();
+    });
+    setControls();
     return;
   }
-  remaining = st.duration;
-  stepDuration = st.duration;
-  isPaused = false;
-  lastVoiceCueSecond = -1;
-  updateTimerUI();
-  if(withVoice) speak(st.voiceStart || `${st.name}，开始。`);
+  if(started)return;
+  started=true;
+  paused=false;
+  currentIndex=Math.min(currentIndex,flat.length-1);
+  currentSet=Math.max(1,currentSet||1);
+  requestWakeLock();
+  scrollCurrent();
+  updateUI();
+  setControls();
+  announceAndStartCurrent({isFirst:true});
 }
 
-function updateTimerUI(){
-  const st = timerSteps[currentStep];
-  if(!st) return;
-  document.getElementById("timerPhase").textContent =
-    `${st.type==="rest" ? "休息" : "训练"} · ${st.section}${st.round ? " · "+st.round : ""}`;
-  document.getElementById("timerExercise").textContent = st.name;
-  document.getElementById("timerCount").textContent = fmt(remaining);
-  document.getElementById("timerSub").textContent =
-    `${st.detail || ""}　步骤 ${currentStep+1}/${timerSteps.length}`;
-  const pct = stepDuration ? ((stepDuration-remaining)/stepDuration)*100 : 0;
-  document.getElementById("progressBar").style.width = `${Math.min(100,Math.max(0,pct))}%`;
+function pauseWorkout(){
+  if(!started||paused)return;
+  paused=true;
+  transitioning=false;
+  inRest=false;
+  clearInterval(restTick);restTick=null;
+  transitionToken++;
+  clearInterval(tick);
+  tick=null;
+  try{if('speechSynthesis'in window)speechSynthesis.cancel()}catch(e){}
+  speak('训练已暂停。');
+  setControls();
 }
 
-function fireTimedVoiceCue(){
-  if(!voiceEnabled) return;
-  const st = timerSteps[currentStep];
-  if(!st || !st.cues) return;
-  const elapsed = stepDuration - remaining;
-  if(elapsed === lastVoiceCueSecond) return;
-  const cue = st.cues[elapsed];
-  if(cue){
-    lastVoiceCueSecond = elapsed;
-    speak(cue);
+function startTick(){
+  clearInterval(tick);
+  transitioning=false;
+  if(memberUsesCountdown() && countdownRemaining<=0) resetCountdownForCurrent();
+  tick=setInterval(()=>{
+    if(!started||paused||transitioning||inRest)return;
+    sessionElapsed++;
+    itemDurations[currentIndex]++;
+    if(memberUsesCountdown()){
+      countdownRemaining=Math.max(0,countdownRemaining-1);
+      if(countdownRemaining===10&&!tenSecondCue){
+        tenSecondCue=true;
+        speak('还有10秒。');
+      }
+      updateUI();
+      if(countdownRemaining<=0){
+        clearInterval(tick);tick=null;
+        handleCountdownComplete();
+      }
+    }else{
+      checkReminder();
+      updateUI();
+    }
+  },1000);
+  setControls();
+}
+
+function handleCountdownComplete(){
+  if(!started||paused||inRest)return;
+  if(hasMoreSets()){
+    startGroupRest();
+    return;
+  }
+  completed.add(currentIndex);
+  updateUI();
+  if(currentIndex<flat.length-1){
+    moveTo(currentIndex+1);
+  }else{
+    finishWorkout();
   }
 }
 
-function startTicking(){
-  clearInterval(timerId);
-  timerId = setInterval(()=>{
-    if(isPaused) return;
-    remaining -= 1;
-    if(remaining <= 0){
-      remaining = 0;
-      updateTimerUI();
-      beep();
-      currentStep += 1;
-      if(currentStep >= timerSteps.length){
-        finishWorkout();
-        return;
-      }
-      loadStep(true);
-    }else{
-      updateTimerUI();
-      fireTimedVoiceCue();
+function checkReminder(){
+  const sec=itemDurations[currentIndex],min=Math.floor(sec/60);
+  if(sec>=120&&sec%60===0&&reminderMinute[currentIndex]!==min){
+    reminderMinute[currentIndex]=min;
+    speak(`当前动作已经进行${min}分钟。`);
+  }
+}
+
+function announceAndStartCurrent({isFirst=false,isPrevious=false,label=""}={}){
+  if(!started||paused||!flat[currentIndex])return;
+  clearInterval(tick);
+  tick=null;
+  transitioning=true;
+  const token=++transitionToken;
+  const x=flat[currentIndex];
+  const g=guideFor(x.title,x.desc);
+  const setLead=explicitSetCount(x)>1?`现在是第${currentSet}组。`:"";
+  const announcement=label?`${label}，${x.title}。${exercisePrescription(x)}。${setLead}`:`${nextAnnouncement(x,isFirst,isPrevious)}${setLead}`;
+
+  scrollCurrent();
+  updateUI();
+  setControls();
+  toast(`${x.title} · ${exercisePrescription(x)}`);
+
+  speak(announcement,()=>{
+    if(token!==transitionToken||!started||paused)return;
+    if(memberUsesCountdown()) resetCountdownForCurrent();
+    startTick();
+    // Start timing first, then narrate technique while the timer is running.
+    speak(`开始计时。动作要点：${g.points}。呼吸：${g.breathing}`);
+  });
+}
+
+function startGroupRest(){
+  if(!started||paused||inRest||!flat[currentIndex])return;
+  clearInterval(tick);tick=null;
+  transitioning=false;
+  inRest=true;
+  restTotal=groupRestSeconds(flat[currentIndex]);
+  restRemaining=restTotal;
+  const finishedSet=currentSet;
+  const nextSet=currentSet+1;
+  setControls();
+  updateUI();
+  speak(`第${finishedSet}组完成。组间休息${restTotal}秒。你可以点击略过休息。`);
+
+  clearInterval(restTick);
+  let tenSecondCue=false;
+  restTick=setInterval(()=>{
+    if(!started||paused||!inRest)return;
+    sessionElapsed++;
+    restRemaining=Math.max(0,restRemaining-1);
+    if(restRemaining===10&&!tenSecondCue){
+      tenSecondCue=true;
+      speak('还有10秒，准备下一组。');
     }
+    updateUI();
+    if(restRemaining<=0)finishGroupRest(false);
   },1000);
 }
 
-function stopTimer(){
-  clearInterval(timerId);
-  timerId = null;
-  isPaused = false;
-  try { speechSynthesis.cancel(); } catch(e){}
-}
-
-function togglePause(){
-  if(!timerId) return;
-  isPaused = !isPaused;
-  document.getElementById("pauseBtn").textContent = isPaused ? "继续" : "暂停";
-  if(isPaused){
-    try { speechSynthesis.cancel(); } catch(e){}
-    document.getElementById("timerPhase").textContent = "已暂停";
-  }else{
-    updateTimerUI();
-    speak("继续训练。");
-  }
-}
-
-function prevStep(){
-  if(!timerSteps.length) return;
-  currentStep = Math.max(0,currentStep-1);
-  loadStep(true);
-}
-
-function nextStep(){
-  if(!timerSteps.length) return;
-  currentStep += 1;
-  if(currentStep >= timerSteps.length) finishWorkout();
-  else loadStep(true);
-}
-
-function finishWorkout(){
-  stopTimer();
-  document.getElementById("timerPhase").textContent = "训练完成";
-  document.getElementById("timerExercise").textContent = `${memberNames[currentMember]}今天的训练完成了`;
-  document.getElementById("timerCount").textContent = "✓";
-  document.getElementById("timerSub").textContent = "已自动记录本次完成。";
-  document.getElementById("progressBar").style.width = "100%";
-  document.getElementById("startBtn").disabled = false;
-  document.getElementById("pauseBtn").disabled = true;
-  document.getElementById("prevBtn").disabled = true;
-  document.getElementById("nextBtn").disabled = true;
-  speak("今天的训练完成了。做得很好，放松一下。");
-  markComplete(true);
-}
-
-function beep(){
-  try{
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if(!AudioCtx) return;
-    if(!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
-    if(sharedAudioCtx.state === "suspended") sharedAudioCtx.resume();
-    const osc = sharedAudioCtx.createOscillator();
-    const gain = sharedAudioCtx.createGain();
-    osc.connect(gain); gain.connect(sharedAudioCtx.destination);
-    osc.frequency.value = 880;
-    gain.gain.value = 0.05;
-    osc.start();
-    osc.stop(sharedAudioCtx.currentTime + 0.12);
-  }catch(e){}
-}
-
-function todayKey(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-
-function getRecords(){
-  try{
-    const rs = JSON.parse(localStorage.getItem("fitness_completion_records") || "[]");
-    return rs.map(r => ({...r, member:r.member || "mom"}));
-  }catch(e){ return []; }
-}
-
-function saveRecords(records){
-  try{
-    localStorage.setItem("fitness_completion_records", JSON.stringify(records));
-  }catch(e){}
-}
-
-function markComplete(auto=false){
-  if(!getPlan(currentDay)) return;
-  const records = getRecords();
-  const date = todayKey();
-  const exists = records.some(r=>r.date===date && r.day===currentDay && r.member===currentMember);
-  if(!exists){
-    records.push({
-      date,
-      day:currentDay,
-      member:currentMember,
-      title:getPlan(currentDay).title
-    });
-    saveRecords(records);
-  }
-  renderHistory();
-  if(!auto){
-    document.getElementById("timerSub").textContent = `已记录${memberNames[currentMember]}今天完成训练。`;
-  }
-}
-
-function startOfWeek(date){
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day===0 ? -6 : 1-day;
-  d.setDate(d.getDate()+diff);
-  d.setHours(0,0,0,0);
-  return d;
-}
-
-function renderHistory(){
-  const records = getRecords()
-    .filter(r=>r.member===currentMember)
-    .sort((a,b)=>b.date.localeCompare(a.date));
-  const now = new Date();
-  const ws = startOfWeek(now);
-  const we = new Date(ws); we.setDate(ws.getDate()+7);
-  const weekDates = new Set(records.filter(r=>{
-    const d = new Date(r.date+"T00:00:00");
-    return d>=ws && d<we;
-  }).map(r=>r.date));
-
-  document.querySelector(".history-title").textContent = `${memberNames[currentMember]}的完成记录`;
-  document.getElementById("weekDone").textContent = `本周完成 ${weekDates.size} 天`;
-  document.getElementById("totalDone").textContent = `累计完成 ${records.length} 次`;
-
-  const list = document.getElementById("recordList");
-  if(!records.length){
-    list.innerHTML = `<div class="note">还没有完成记录。完成训练后会自动保存在当前设备。</div>`;
-    return;
-  }
-  list.innerHTML = records.slice(0,10).map(r=>`
-    <div class="record">
-      <div><strong>${r.date}</strong>　${r.day}</div>
-      <span class="done-badge">已完成</span>
-    </div>
-  `).join("");
-}
-
-function clearHistory(){
-  if(!confirm(`确定清空${memberNames[currentMember]}的本地完成记录吗？`)) return;
-  const records = getRecords().filter(r=>r.member!==currentMember);
-  saveRecords(records);
-  renderHistory();
-}
-
-document.querySelectorAll(".family-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>selectMember(btn.dataset.member));
-});
-document.getElementById("voiceBtn").addEventListener("click",()=>{
-  voiceEnabled = !voiceEnabled;
-  try { localStorage.setItem("fitness_voice_enabled", voiceEnabled ? "1" : "0"); } catch(e){}
-  if(!voiceEnabled){ try { speechSynthesis.cancel(); } catch(e){} }
-  renderFamilyTabs();
-  if(voiceEnabled) speak("语音提醒已开启。");
-});
-document.getElementById("startBtn").addEventListener("click", startWorkout);
-document.getElementById("pauseBtn").addEventListener("click", togglePause);
-document.getElementById("prevBtn").addEventListener("click", prevStep);
-document.getElementById("nextBtn").addEventListener("click", nextStep);
-document.getElementById("completeBtn").addEventListener("click", ()=>markComplete(false));
-document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
-
-let initial = "周一";
-try {
-  const savedMember = localStorage.getItem("fitness_selected_member");
-  if(["mom","dad","daughter"].includes(savedMember)) currentMember = savedMember;
-  const voiceSaved = localStorage.getItem("fitness_voice_enabled");
-  if(voiceSaved !== null) voiceEnabled = voiceSaved === "1";
-  const saved = localStorage.getItem("fitness_selected_day");
-  if(order.includes(saved)) initial = saved;
-  else{
-    const jsDay = new Date().getDay();
-    const map = {1:"周一",2:"周二",3:"周三",4:"周四",5:"周五",6:"周六",0:"周日"};
-    initial = map[jsDay] || "周一";
-  }
-} catch(e){}
-
-renderFamilyTabs();
-render(initial);
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+function finishGroupRest(skipped=false){
+  if(!inRest)return;
+  clearInterval(restTick);restTick=null;
+  inRest=false;
+  currentSet++;
+  const x=flat[currentIndex];
+  updateUI();
+  setControls();
+  const prefix=skipped?'已略过休息。':'休息结束。';
+  speak(`${prefix}开始第${currentSet}组。${x.title}。${exercisePrescription(x)}。`,()=>{
+    if(!started||paused||inRest)return;
+    if(memberUsesCountdown()) resetCountdownForCurrent();
+    startTick();
+    const g=guideFor(x.title,x.desc);
+    speak(`第${currentSet}组开始计时。动作要点：${g.points}。呼吸：${g.breathing}`);
   });
 }
-</script>
 
+function advanceWorkout(){
+  if(!started||paused||transitioning||inRest)return;
+  if(hasMoreSets()){
+    startGroupRest();
+    return;
+  }
+  if(currentIndex>=flat.length-1){
+    toast('已经是最后一项，可以标记完成');
+    return;
+  }
+  moveTo(currentIndex+1);
+}
+
+function moveTo(idx){
+  if(!started||idx<0||idx>=flat.length||transitioning||inRest)return;
+  const old=currentIndex;
+  clearInterval(tick);tick=null;
+  clearInterval(restTick);restTick=null;
+  if(idx>old)completed.add(old);
+  currentIndex=idx;
+  currentSet=1;
+  resetCountdownForCurrent();
+  updateUI();
+  setControls();
+  announceAndStartCurrent({isPrevious:idx<old});
+}
+
+function scrollCurrent(){requestAnimationFrame(()=>document.getElementById('ex-'+currentIndex)?.scrollIntoView({behavior:'smooth',block:'center'}));}
+function finishWorkout(){
+  if(!started)return;transitionToken++;transitioning=false;inRest=false;clearInterval(restTick);restTick=null;try{if('speechSynthesis'in window)speechSynthesis.cancel()}catch(e){}if(currentIndex<flat.length-1&&!confirm(`还有 ${flat.length-1-currentIndex} 项未到达，仍然标记完成吗？`))return;completed.add(currentIndex);const record={date:new Date().toISOString(),day,member,totalSec:sessionElapsed,items:flat.map((x,i)=>({title:x.title,sec:itemDurations[i]})).filter(x=>x.sec>0)};const rs=getRecords();rs.push(record);localStorage.setItem('fitness_records_v2',JSON.stringify(rs));clearInterval(tick);tick=null;started=false;paused=false;releaseWakeLock();completed=new Set(flat.map((_,i)=>i));updateUI();setControls();renderHistory();speak(`训练完成，总时长${Math.floor(sessionElapsed/60)}分钟${sessionElapsed%60}秒。`);toast('训练已完成并保存时长');}
+function endWithoutRecord(){transitionToken++;transitioning=false;inRest=false;clearInterval(restTick);restTick=null;clearInterval(tick);tick=null;try{if('speechSynthesis'in window)speechSynthesis.cancel()}catch(e){}started=false;paused=false;releaseWakeLock();}
+function getRecords(){try{return JSON.parse(localStorage.getItem('fitness_records_v2')||'[]')}catch{return[]}}
+function renderHistory(){const all=getRecords().filter(r=>r.member===member).sort((a,b)=>b.date.localeCompare(a.date));document.getElementById('historyTitle').textContent=`${members[member]}的完成记录 · ${all.length} 次`;const el=document.getElementById('historyList');if(!all.length){el.innerHTML='<div class="empty">暂无记录，完成一次训练后会显示总时长和每个动作的实际用时。</div>';return;}el.innerHTML=all.slice(0,8).map(r=>`<div class="record"><div class="record-top"><strong>${new Date(r.date).toLocaleDateString('zh-CN')} ${esc(r.day)}</strong><strong>${fmt(r.totalSec)}</strong></div><details><summary>查看动作时长</summary><div class="record-items">${r.items.map(x=>`${esc(x.title)}：${fmt(x.sec)}`).join('<br>')}</div></details></div>`).join('');}
+
+function speak(text,onend=null){
+  if(!('speechSynthesis'in window)){
+    toast('当前设备不支持语音朗读');
+    if(typeof onend==='function')setTimeout(onend,50);
+    return;
+  }
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN';
+    u.rate=1.02;
+    const vs=speechSynthesis.getVoices();
+    const zh=vs.filter(v=>/^zh/i.test(v.lang));
+    const female=/ting|mei|jia|yating|lili|xiaoxiao|xiaoyi|xiaohan|xiaomeng|xiaorui|xiaoshuang|xiaoxuan|sandy|shelley|flo|grandma|female|女/i;
+    u.voice=zh.find(v=>female.test(v.name))||zh[0]||null;
+    u.pitch=1.06;
+    let done=false;
+    const finish=()=>{
+      if(done)return;
+      done=true;
+      if(typeof onend==='function')onend();
+    };
+    u.onend=finish;
+    u.onerror=finish;
+    speechSynthesis.speak(u);
+  }catch(e){
+    if(typeof onend==='function')setTimeout(onend,50);
+  }
+}
+function speakGuide(i){const x=flat[i],g=guideFor(x.title,x.desc);speak(g.voice);}
+function openDetail(i){activeDetailIndex=i;const x=flat[i],g=guideFor(x.title,x.desc);document.getElementById('homeView').classList.add('hide');document.getElementById('detailView').classList.add('show');document.getElementById('detailTitle').textContent=x.title;document.getElementById('detailPlan').textContent=`计划：${x.plan} · ${x.desc}`;document.getElementById('detailPoints').textContent=g.points;document.getElementById('detailErrors').textContent=g.errors;document.getElementById('detailBreathing').textContent=g.breathing;document.getElementById('detailBeginner').textContent=g.beginner;document.getElementById('imageDemo').href=`https://www.bing.com/images/search?q=${q(g.query)}`;document.getElementById('videoDemo').href=`https://www.youtube.com/results?search_query=${q(g.query)}`;window.scrollTo({top:0,behavior:'smooth'});}
+function closeDetail(){document.getElementById('detailView').classList.remove('show');document.getElementById('homeView').classList.remove('hide');activeDetailIndex=null;if(started)scrollCurrent();}
+
+async function requestWakeLock(){
+  const badge=document.getElementById('wakeBadge');if(!('wakeLock'in navigator)){badge.textContent='⚠️ 常亮功能不受支持';badge.className='wake warn';return;}
+  try{wakeLock=await navigator.wakeLock.request('screen');badge.textContent='☀️ 屏幕常亮中';badge.className='wake on';wakeLock.addEventListener('release',()=>{if(started){badge.textContent='↻ 正在恢复常亮';badge.className='wake warn';}});}catch(e){badge.textContent='⚠️ 无法保持常亮';badge.className='wake warn';}
+}
+async function releaseWakeLock(){try{if(wakeLock)await wakeLock.release()}catch(e){}wakeLock=null;const b=document.getElementById('wakeBadge');b.textContent='☀️ 开始后保持常亮';b.className='wake';}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&started)requestWakeLock();});
+
+document.querySelectorAll('.member-btn').forEach(b=>b.addEventListener('click',()=>{if(started&&!confirm('切换家庭成员会结束当前训练，继续吗？'))return;endWithoutRecord();member=b.dataset.member;localStorage.setItem('fitness_member',member);render();}));
+document.getElementById('startBtn').addEventListener('click',startWorkout);document.getElementById('pauseBtn').addEventListener('click',pauseWorkout);document.getElementById('prevBtn').addEventListener('click',()=>moveTo(currentIndex-1));document.getElementById('nextBtn').addEventListener('click',advanceWorkout);document.getElementById('skipRestBtn').addEventListener('click',()=>finishGroupRest(true));document.getElementById('completeBtn').addEventListener('click',finishWorkout);document.getElementById('backBtn').addEventListener('click',closeDetail);document.getElementById('detailSpeak').addEventListener('click',()=>{if(activeDetailIndex!=null)speakGuide(activeDetailIndex)});
+window.addEventListener('hashchange',()=>{if(!location.hash.startsWith('#detail-')&&document.getElementById('detailView').classList.contains('show'))closeDetail();});
+
+render();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
 </body>
 </html>
